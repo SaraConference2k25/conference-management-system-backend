@@ -11,6 +11,7 @@ import com.saraconference.backend.repository.UserRepository;
 
 import com.saraconference.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,22 +46,24 @@ public class AuthServiceImpl implements AuthService {
 
         return new AuthResponse("User registered successfully!", true);
     }
-    @Override
-    public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+    public LoginResponse login(String email, String password, String requestedRole) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            return new LoginResponse("Invalid credentials", null, null);
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new RuntimeException("Invalid credentials");
         }
 
-        // Extract the role name from user's roles
-        String roleName = user.getRoles().stream()
-                .findFirst()
-                .map(Role::getRoleName)
-                .orElse("PARTICIPANT");
+        // Check if user has the requested role
+        boolean hasRole = user.getRoles().stream()
+                .anyMatch(role -> role.getRoleName().equals(requestedRole));
 
-        return new LoginResponse("Login successful", user.getEmail(), roleName);
+        if (!hasRole) {
+            throw new  RuntimeException("Access Denied for " + requestedRole + " role : " + HttpStatus.UNAUTHORIZED);
+        }
+
+        return new LoginResponse("Login successful", user.getEmail(), requestedRole);
     }
+
 
 }
