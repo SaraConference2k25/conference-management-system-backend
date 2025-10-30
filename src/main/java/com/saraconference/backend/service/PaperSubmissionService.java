@@ -1,19 +1,52 @@
 package com.saraconference.backend.service;
 
-import com.saraconference.backend.dto.PaperSubmissionRequest;
 import com.saraconference.backend.dto.PaperSubmissionResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface PaperSubmissionService {
-    PaperSubmissionResponse submitPaper(String userEmail, PaperSubmissionRequest request, MultipartFile file);
-    PaperSubmissionResponse getPaperById(Long id, String userEmail);
-    List<PaperSubmissionResponse> getUserPapers(String userEmail);
+    /**
+     * Submit a new paper
+     */
+    PaperSubmissionResponse submitPaper(String name, String email, String contactNo,
+                                        String department, String collegeName,
+                                        String paperTitle, String paperAbstract,
+                                        MultipartFile paperFile) throws Exception;
+
+    /**
+     * Get all papers
+     */
     List<PaperSubmissionResponse> getAllPapers();
-    List<PaperSubmissionResponse> getPapersByStatus(String status);
+
+    /**
+     * Get paper by ID
+     */
+    PaperSubmissionResponse getPaperById(Long id);
+
+    /**
+     * Get papers by department
+     */
     List<PaperSubmissionResponse> getPapersByDepartment(String department);
-    PaperSubmissionResponse reviewPaper(Long id, String reviewerEmail, String status, String comments);
-    void deletePaper(Long id, String userEmail);
-    byte[] downloadPaper(Long id, String userEmail);
+
+    /**
+     * Search papers by title
+     */
+    List<PaperSubmissionResponse> searchPapersByTitle(String query);
+
+    /**
+     * Download paper file
+     */
+    byte[] downloadPaper(Long id);
+
+    /**
+     * Delete paper
+     */
+    void deletePaper(Long id);
+
+    /**
+     * Get papers by email
+     */
+    List<PaperSubmissionResponse> getPapersByEmail(String email);
 }
+

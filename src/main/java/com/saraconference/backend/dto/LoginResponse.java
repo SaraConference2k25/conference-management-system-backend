@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginResponse {
+    private String username;
     private String email;
     private String role;
     private String message;
@@ -26,4 +27,10 @@ public class LoginResponse {
         this.role = role;
     }
 
+    public LoginResponse(String loginSuccessful, String email, String requestedRole, String username, int value) {
+        this.message = loginSuccessful + " Welcome, " + username + "!";
+        this.email = email;
+        this.role = requestedRole;
+        this.username = username;
+    }
 }

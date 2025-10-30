@@ -1,4 +1,175 @@
 package com.saraconference.backend.service.impl;
 
-public class PaperSubmissionServiceImpl {
+import com.saraconference.backend.dto.PaperSubmissionResponse;
+import com.saraconference.backend.entity.PaperSubmission;
+import com.saraconference.backend.repository.PaperSubmissionRepository;
+import com.saraconference.backend.service.BlobStorageService;
+import com.saraconference.backend.service.PaperSubmissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class PaperSubmissionServiceImpl implements PaperSubmissionService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PaperSubmissionServiceImpl.class);
+
+    @Autowired
+    private PaperSubmissionRepository paperSubmissionRepository;
+
+    @Autowired
+    private BlobStorageService blobStorageService;
+
+    @Override
+    public PaperSubmissionResponse submitPaper(String name, String email, String contactNo,
+                                               String department, String collegeName,
+                                               String paperTitle, String paperAbstract,
+                                               MultipartFile paperFile) throws Exception {
+        try {
+            // Upload file to blob storage
+            String fileUrl = blobStorageService.uploadFile(paperFile);
+            String fileName = paperFile.getOriginalFilename();
+
+            // Create paper submission
+            PaperSubmission paper = new PaperSubmission();
+            paper.setName(name);
+            paper.setEmail(email);
+            paper.setContactNo(contactNo);
+            paper.setDepartment(department);
+            paper.setCollegeName(collegeName);
+            paper.setPaperTitle(paperTitle);
+            paper.setPaperAbstract(paperAbstract);
+            paper.setPaperFileName(fileName);
+            paper.setPaperFileUrl(fileUrl);
+            paper.setSubmittedAt(LocalDateTime.now());
+
+            PaperSubmission savedPaper = paperSubmissionRepository.save(paper);
+            logger.info("Paper submitted successfully with ID: {}", savedPaper.getId());
+            return convertToResponse(savedPaper);
+        } catch (Exception e) {
+            logger.error("Error submitting paper: {}", e.getMessage());
+            throw new Exception("Error submitting paper: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<PaperSubmissionResponse> getAllPapers() {
+        try {
+            return paperSubmissionRepository.findAll()
+                    .stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Error retrieving all papers: {}", e.getMessage());
+            return List.of();
+        }
+    }
+
+    @Override
+    public PaperSubmissionResponse getPaperById(Long id) {
+        try {
+            PaperSubmission paper = paperSubmissionRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + id));
+            return convertToResponse(paper);
+        } catch (Exception e) {
+            logger.error("Error retrieving paper with ID {}: {}", id, e.getMessage());
+            throw new RuntimeException("Paper not found", e);
+        }
+    }
+
+    @Override
+    public List<PaperSubmissionResponse> getPapersByDepartment(String department) {
+        try {
+            return paperSubmissionRepository.findByDepartment(department)
+                    .stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Error retrieving papers by department {}: {}", department, e.getMessage());
+            return List.of();
+        }
+    }
+
+    @Override
+    public List<PaperSubmissionResponse> searchPapersByTitle(String query) {
+        try {
+            return paperSubmissionRepository.findByPaperTitleContainingIgnoreCase(query)
+                    .stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Error searching papers by title {}: {}", query, e.getMessage());
+            return List.of();
+        }
+    }
+
+    @Override
+    public byte[] downloadPaper(Long id) {
+        try {
+            PaperSubmission paper = paperSubmissionRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + id));
+            return blobStorageService.downloadFile(paper.getPaperFileName());
+        } catch (Exception e) {
+            logger.error("Error downloading paper with ID {}: {}", id, e.getMessage());
+            throw new RuntimeException("Error downloading paper", e);
+        }
+    }
+
+    @Override
+    public void deletePaper(Long id) {
+        try {
+            PaperSubmission paper = paperSubmissionRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + id));
+
+            // Delete file from blob storage
+            blobStorageService.deleteFile(paper.getPaperFileName());
+
+            // Delete from database
+            paperSubmissionRepository.deleteById(id);
+            logger.info("Paper deleted successfully with ID: {}", id);
+        } catch (Exception e) {
+            logger.error("Error deleting paper with ID {}: {}", id, e.getMessage());
+            throw new RuntimeException("Error deleting paper", e);
+        }
+    }
+
+    @Override
+    public List<PaperSubmissionResponse> getPapersByEmail(String email) {
+        try {
+            return paperSubmissionRepository.findByEmail(email)
+                    .stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Error retrieving papers by email {}: {}", email, e.getMessage());
+            return List.of();
+        }
+    }
+
+    /**
+     * Convert PaperSubmission entity to Response DTO
+     */
+    private PaperSubmissionResponse convertToResponse(PaperSubmission paper) {
+        PaperSubmissionResponse response = new PaperSubmissionResponse();
+        response.setId(paper.getId());
+        response.setName(paper.getName());
+        response.setEmail(paper.getEmail());
+        response.setContactNo(paper.getContactNo());
+        response.setDepartment(paper.getDepartment());
+        response.setCollegeName(paper.getCollegeName());
+        response.setPaperTitle(paper.getPaperTitle());
+        response.setPaperAbstract(paper.getPaperAbstract());
+        response.setPaperFileName(paper.getPaperFileName());
+        response.setPaperFileUrl(paper.getPaperFileUrl());
+        response.setSubmittedAt(paper.getSubmittedAt());
+        return response;
+    }
 }
+
+
