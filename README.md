@@ -1,0 +1,1537 @@
+# SaraConference2k25 Backend
+
+<div align="center">
+
+![Java](https://img.shields.io/badge/Java-17-007396?style=for-the-badge&logo=java&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-42.7.3-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Azure](https://img.shields.io/badge/Azure%20Blob-Storage-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-3.x-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
+
+**Enterprise-grade RESTful API backend for academic conference management**
+
+[Features](#-features) •
+[Quick Start](#-quick-start) •
+[API Documentation](#-api-documentation) •
+[Architecture](#-architecture) •
+[Deployment](#-deployment)
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Tech Stack](#-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [Configuration](#-configuration)
+- [API Documentation](#-api-documentation)
+- [Database Schema](#-database-schema)
+- [Project Structure](#-project-structure)
+- [Development](#-development)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Security](#-security)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
+
+---
+
+## 🎯 Overview
+
+The **SaraConference2k25 Backend** is a robust, scalable Spring Boot application designed to power academic conference management systems. It provides comprehensive APIs for user management, paper submission, review workflows, and role-based access control.
+
+Built with enterprise best practices, this backend supports multi-tenant architectures, cloud storage integration, and advanced security features suitable for production deployments.
+
+### Key Capabilities
+
+- **Multi-Role Authentication**: Support for Administrators, Evaluators, and Participants
+- **Paper Management**: End-to-end paper submission, review, and storage workflow
+- **Cloud Integration**: Seamless Azure Blob Storage integration for document management
+- **RESTful APIs**: Well-documented, standards-compliant REST endpoints
+- **Production-Ready**: Built with Spring Boot 3.x and enterprise-grade libraries
+
+---
+
+## ✨ Features
+
+### Authentication & Authorization
+- ✅ Secure user registration and login
+- ✅ Multi-role support (Admin, Evaluator, Participant)
+- ✅ BCrypt password encryption
+- ✅ Role-based access control (RBAC)
+- ✅ JWT-ready architecture (extensible)
+
+### Paper Submission System
+- 📄 Multi-part form submission with file uploads
+- 📄 Azure Blob Storage integration for scalable file management
+- 📄 Paper metadata management (title, abstract, department, etc.)
+- 📄 Download and retrieval APIs
+- 📄 Advanced search and filtering capabilities
+
+### User Management
+- 👤 Profile management for all user types
+- 👤 Admin, Evaluator, and Participant specific profiles
+- 👤 Automatic username generation from email
+- 👤 Timestamp tracking (created, updated)
+
+### Search & Query Capabilities
+- 🔍 Search papers by title
+- 🔍 Filter by department
+- 🔍 Filter by submitter email
+- 🔍 Retrieve all papers with pagination support
+
+### Additional Features
+- 🚀 CORS enabled for cross-origin requests
+- 🚀 PostgreSQL database with JPA/Hibernate
+- 🚀 Lombok integration for reduced boilerplate
+- 🚀 Spring Boot DevTools for hot reloading
+- 🚀 Comprehensive error handling
+- 🚀 Logging with SLF4J
+
+---
+
+## 🏗 Architecture
+
+### System Architecture
+
+```
+┌─────────────────┐
+│   Frontend      │
+│   Application   │
+└────────┬────────┘
+         │ HTTP/REST
+         │
+┌────────▼────────────────────────────────────┐
+│         Spring Boot Backend                 │
+│  ┌──────────────────────────────────────┐  │
+│  │       Controller Layer               │  │
+│  │  - AuthController                    │  │
+│  │  - PaperSubmissionController         │  │
+│  │  - UserController                    │  │
+│  └──────────┬───────────────────────────┘  │
+│             │                                │
+│  ┌──────────▼───────────────────────────┐  │
+│  │       Service Layer                  │  │
+│  │  - AuthService                       │  │
+│  │  - PaperSubmissionService            │  │
+│  │  - BlobStorageService                │  │
+│  │  - UserService                       │  │
+│  └──────────┬───────────────────────────┘  │
+│             │                                │
+│  ┌──────────▼───────────────────────────┐  │
+│  │       Repository Layer (JPA)         │  │
+│  │  - UserRepository                    │  │
+│  │  - RoleRepository                    │  │
+│  │  - PaperSubmissionRepository         │  │
+│  └──────────┬───────────────────────────┘  │
+└─────────────┼────────────────────────────────┘
+              │
+     ┌────────┴────────┐
+     │                 │
+┌────▼─────┐    ┌─────▼────────┐
+│PostgreSQL│    │ Azure Blob   │
+│ Database │    │   Storage    │
+└──────────┘    └──────────────┘
+```
+
+### Layered Architecture Pattern
+
+The application follows a **clean layered architecture**:
+
+1. **Controller Layer**: Handles HTTP requests and responses
+2. **Service Layer**: Contains business logic
+3. **Repository Layer**: Data access using Spring Data JPA
+4. **Entity Layer**: JPA entities representing database tables
+5. **DTO Layer**: Data Transfer Objects for API communication
+
+---
+
+## 🛠 Tech Stack
+
+### Core Technologies
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Java** | 17 | Primary programming language |
+| **Spring Boot** | 3.5.6 | Application framework |
+| **Spring Data JPA** | 3.5.6 | Database abstraction layer |
+| **Spring Security** | 3.5.6 | Authentication and authorization |
+| **Spring Web** | 3.5.6 | RESTful web services |
+
+### Database & Storage
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **PostgreSQL** | 42.7.3 | Primary relational database |
+| **Azure Blob Storage** | 12.25.1 | Cloud file storage for papers |
+
+### Development Tools
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Lombok** | Latest | Reduce boilerplate code |
+| **Maven** | 3.x | Build and dependency management |
+| **Spring Boot DevTools** | Latest | Development hot reload |
+
+### Testing
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Spring Boot Test** | 3.5.6 | Unit and integration testing |
+| **Spring Security Test** | 3.5.6 | Security testing utilities |
+
+---
+
+## 📦 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+### Required Software
+
+- **Java Development Kit (JDK) 17** or higher
+  ```bash
+  java -version  # Should show version 17+
+  ```
+
+- **Apache Maven 3.6+**
+  ```bash
+  mvn -version
+  ```
+
+- **PostgreSQL 12+**
+  ```bash
+  psql --version
+  ```
+
+### Required Services
+
+- **Azure Storage Account** (for blob storage)
+  - Create a storage account in Azure Portal
+  - Create a container for paper submissions
+  - Get connection string and container name
+
+### Optional Tools
+
+- **Git** for version control
+- **Postman** or **cURL** for API testing
+- **IntelliJ IDEA** or **VS Code** for development
+- **Docker** for containerized deployment (optional)
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/SaraConference2k25/backend.git
+cd backend
+```
+
+### 2. Set Up PostgreSQL Database
+
+```bash
+# Access PostgreSQL
+psql -U postgres
+
+# Create database
+CREATE DATABASE saraconference_db;
+
+# Create user (optional)
+CREATE USER saraconf_user WITH PASSWORD 'your_secure_password';
+GRANT ALL PRIVILEGES ON DATABASE saraconference_db TO saraconf_user;
+```
+
+### 3. Configure Application Properties
+
+Create `src/main/resources/application.properties`:
+
+```properties
+# Database Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/saraconference_db
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# Azure Blob Storage Configuration
+azure.storage.connection-string=your_azure_connection_string
+azure.storage.container-name=papers
+
+# Server Configuration
+server.port=8080
+
+# File Upload Configuration
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
+
+# Logging Configuration
+logging.level.com.saraconference.backend=INFO
+logging.level.org.springframework.security=DEBUG
+```
+
+### 4. Build the Project
+
+```bash
+# Using Maven wrapper (recommended)
+./mvnw clean install
+
+# Or using system Maven
+mvn clean install
+```
+
+### 5. Run the Application
+
+```bash
+# Using Maven wrapper
+./mvnw spring-boot:run
+
+# Or using system Maven
+mvn spring-boot:run
+
+# Or run the JAR directly
+java -jar target/backend-0.0.1-SNAPSHOT.jar
+```
+
+### 6. Verify Installation
+
+The application should start on `http://localhost:8080`
+
+Test the API:
+```bash
+curl http://localhost:8080/api/papers/test
+# Expected response: "Paper submission API is working!"
+```
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+For production deployments, use environment variables instead of property files:
+
+```bash
+export SPRING_DATASOURCE_URL=jdbc:postgresql://your-db-host:5432/saraconference_db
+export SPRING_DATASOURCE_USERNAME=your_username
+export SPRING_DATASOURCE_PASSWORD=your_password
+export AZURE_STORAGE_CONNECTION_STRING=your_azure_connection_string
+export AZURE_STORAGE_CONTAINER_NAME=papers
+export SERVER_PORT=8080
+```
+
+### Profile-Based Configuration
+
+Create multiple property files for different environments:
+
+- `application-dev.properties` - Development environment
+- `application-test.properties` - Testing environment
+- `application-prod.properties` - Production environment
+
+Activate a profile:
+```bash
+java -jar backend.jar --spring.profiles.active=prod
+```
+
+### Security Configuration
+
+The current configuration in `WebSecurityConfig.java`:
+- CSRF is disabled (suitable for REST APIs)
+- All endpoints are publicly accessible (configure based on requirements)
+- BCrypt password encryption is enabled
+
+**For production**, enable proper security:
+1. Implement JWT token authentication
+2. Configure role-based endpoint protection
+3. Enable HTTPS/TLS
+4. Implement rate limiting
+
+---
+
+## 📚 API Documentation
+
+### Base URL
+
+```
+http://localhost:8080/api
+```
+
+### Authentication Endpoints
+
+#### Register User
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "username": "johndoe"
+}
+
+Response: 200 OK
+{
+  "userId": 1,
+  "email": "user@example.com",
+  "username": "johndoe",
+  "message": "User registered successfully"
+}
+```
+
+#### Login
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "role": "PARTICIPANT"
+}
+
+Response: 200 OK
+{
+  "userId": 1,
+  "email": "user@example.com",
+  "username": "johndoe",
+  "role": "PARTICIPANT",
+  "message": "Login successful"
+}
+```
+
+### Paper Submission Endpoints
+
+#### Submit Paper
+
+```http
+POST /api/papers/submit
+Content-Type: multipart/form-data
+
+Form Data:
+- name: John Doe
+- email: john.doe@university.edu
+- contactNo: +1234567890
+- department: Computer Science
+- collegeName: University of Technology
+- paperTitle: AI in Healthcare
+- paperAbstract: This paper discusses...
+- paperFile: [PDF file]
+
+Response: 200 OK
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@university.edu",
+  "paperTitle": "AI in Healthcare",
+  "paperFileUrl": "https://storage.azure.com/...",
+  "submittedAt": "2024-01-15T10:30:00"
+}
+```
+
+#### Get All Papers
+
+```http
+GET /api/papers/all
+
+Response: 200 OK
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "paperTitle": "AI in Healthcare",
+    "department": "Computer Science",
+    "submittedAt": "2024-01-15T10:30:00"
+  },
+  ...
+]
+```
+
+#### Get Paper by ID
+
+```http
+GET /api/papers/{id}
+
+Response: 200 OK
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@university.edu",
+  "contactNo": "+1234567890",
+  "department": "Computer Science",
+  "collegeName": "University of Technology",
+  "paperTitle": "AI in Healthcare",
+  "paperAbstract": "This paper discusses...",
+  "paperFileName": "ai-healthcare.pdf",
+  "paperFileUrl": "https://storage.azure.com/...",
+  "submittedAt": "2024-01-15T10:30:00"
+}
+```
+
+#### Download Paper
+
+```http
+GET /api/papers/download/{id}
+
+Response: 200 OK
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="paper.pdf"
+
+[Binary PDF data]
+```
+
+#### Search Papers
+
+```http
+GET /api/papers/search?query=AI
+
+Response: 200 OK
+[
+  {
+    "id": 1,
+    "paperTitle": "AI in Healthcare",
+    ...
+  }
+]
+```
+
+#### Get Papers by Department
+
+```http
+GET /api/papers/department/Computer%20Science
+
+Response: 200 OK
+[...]
+```
+
+#### Get Papers by Email
+
+```http
+GET /api/papers/email/john.doe@university.edu
+
+Response: 200 OK
+[...]
+```
+
+#### Delete Paper
+
+```http
+DELETE /api/papers/{id}
+
+Response: 200 OK
+"Paper deleted successfully"
+```
+
+### User Management Endpoints
+
+```http
+GET /api/users
+POST /api/users
+GET /api/users/{id}
+PUT /api/users/{id}
+DELETE /api/users/{id}
+```
+
+### Error Responses
+
+All endpoints return appropriate HTTP status codes:
+
+```json
+400 Bad Request
+{
+  "error": "Invalid input data",
+  "message": "Email is required"
+}
+
+404 Not Found
+{
+  "error": "Resource not found",
+  "message": "Paper with ID 123 not found"
+}
+
+500 Internal Server Error
+{
+  "error": "Internal server error",
+  "message": "Database connection failed"
+}
+```
+
+---
+
+## 💾 Database Schema
+
+### Entity Relationship Diagram
+
+```
+┌─────────────────────┐
+│       User          │
+├─────────────────────┤
+│ PK userId           │
+│    username         │
+│    email (unique)   │
+│    password         │
+│    createdAt        │
+│    updatedAt        │
+└──────────┬──────────┘
+           │
+           │ Many-to-Many
+           │
+┌──────────▼──────────┐
+│       Role          │
+├─────────────────────┤
+│ PK roleId           │
+│    roleName (unique)│
+└─────────────────────┘
+
+┌─────────────────────────┐
+│   PaperSubmission       │
+├─────────────────────────┤
+│ PK id                   │
+│    name                 │
+│    email                │
+│    contactNo            │
+│    department           │
+│    collegeName          │
+│    paperTitle           │
+│    paperAbstract        │
+│    paperFileName        │
+│    paperFileUrl         │
+│    submittedAt          │
+└─────────────────────────┘
+
+┌─────────────────────────┐
+│   AdminProfile          │
+├─────────────────────────┤
+│ PK profileId            │
+│ FK userId               │
+│    ... (admin fields)   │
+└─────────────────────────┘
+
+┌─────────────────────────┐
+│   EvaluatorProfile      │
+├─────────────────────────┤
+│ PK profileId            │
+│ FK userId               │
+│    ... (evaluator)      │
+└─────────────────────────┘
+
+┌─────────────────────────┐
+│  ParticipantProfile     │
+├─────────────────────────┤
+│ PK profileId            │
+│ FK userId               │
+│    ... (participant)    │
+└─────────────────────────┘
+```
+
+### Key Tables
+
+#### Users Table
+- Stores user authentication information
+- Email is unique identifier
+- Passwords are BCrypt encrypted
+- Supports multiple roles per user
+
+#### Roles Table
+- Predefined roles: ADMIN, EVALUATOR, PARTICIPANT
+- Many-to-many relationship with users
+
+#### Paper_Submission Table
+- Complete paper metadata
+- References Azure Blob Storage URLs
+- Timestamped submissions
+
+#### Profile Tables
+- Role-specific profile information
+- One-to-one with User table
+- Extensible for additional fields
+
+---
+
+## 📁 Project Structure
+
+```
+backend/
+├── src/
+│   ├── main/
+│   │   ├── java/com/saraconference/backend/
+│   │   │   ├── config/              # Configuration classes
+│   │   │   │   └── WebSecurityConfig.java
+│   │   │   ├── controller/          # REST controllers
+│   │   │   │   ├── AuthController.java
+│   │   │   │   ├── PaperSubmissionController.java
+│   │   │   │   └── UserController.java
+│   │   │   ├── dto/                 # Data Transfer Objects
+│   │   │   │   ├── AuthRequest.java
+│   │   │   │   ├── AuthResponse.java
+│   │   │   │   ├── LoginRequest.java
+│   │   │   │   ├── LoginResponse.java
+│   │   │   │   ├── PaperSubmissionRequest.java
+│   │   │   │   └── PaperSubmissionResponse.java
+│   │   │   ├── entity/              # JPA entities
+│   │   │   │   ├── User.java
+│   │   │   │   ├── Role.java
+│   │   │   │   ├── PaperSubmission.java
+│   │   │   │   ├── AdminProfile.java
+│   │   │   │   ├── EvaluatorProfile.java
+│   │   │   │   └── ParticipantProfile.java
+│   │   │   ├── repository/          # Spring Data JPA repositories
+│   │   │   │   ├── UserRepository.java
+│   │   │   │   ├── RoleRepository.java
+│   │   │   │   ├── PaperSubmissionRepository.java
+│   │   │   │   ├── AdminProfileRepository.java
+│   │   │   │   ├── EvaluatorProfileRepository.java
+│   │   │   │   └── ParticipantProfileRepository.java
+│   │   │   ├── service/             # Service interfaces
+│   │   │   │   ├── AuthService.java
+│   │   │   │   ├── UserService.java
+│   │   │   │   ├── PaperSubmissionService.java
+│   │   │   │   └── BlobStorageService.java
+│   │   │   ├── service/impl/        # Service implementations
+│   │   │   │   ├── AuthServiceImpl.java
+│   │   │   │   ├── UserServiceImpl.java
+│   │   │   │   ├── PaperSubmissionServiceImpl.java
+│   │   │   │   └── BlobStorageServiceImpl.java
+│   │   │   └── BackendApplication.java  # Main application class
+│   │   └── resources/
+│   │       └── application.properties   # (gitignored - create locally)
+│   └── test/
+│       └── java/com/saraconference/backend/
+│           └── BackendApplicationTests.java
+├── .mvn/                            # Maven wrapper
+├── .gitignore
+├── mvnw                             # Maven wrapper script (Unix)
+├── mvnw.cmd                         # Maven wrapper script (Windows)
+├── pom.xml                          # Maven project configuration
+└── README.md                        # This file
+```
+
+### Key Directories
+
+- **config/**: Security, CORS, and other configuration beans
+- **controller/**: REST API endpoints (HTTP request handlers)
+- **dto/**: Data transfer objects for API requests/responses
+- **entity/**: JPA entities mapped to database tables
+- **repository/**: Data access layer (Spring Data JPA)
+- **service/**: Business logic layer (interfaces and implementations)
+
+---
+
+## 💻 Development
+
+### Development Environment Setup
+
+1. **IDE Setup**
+   - Import project as Maven project
+   - Enable Lombok annotation processing
+   - Configure code style (Google Java Style recommended)
+
+2. **Enable Auto-Reload**
+   ```xml
+   <!-- Already included in pom.xml -->
+   <dependency>
+       <groupId>org.springframework.boot</groupId>
+       <artifactId>spring-boot-devtools</artifactId>
+   </dependency>
+   ```
+
+3. **Database Tools**
+   - Use **pgAdmin** for PostgreSQL management
+   - Or use **DBeaver** for universal database access
+
+### Code Style Guidelines
+
+- Follow **Spring Framework** conventions
+- Use **Lombok** annotations to reduce boilerplate
+- Write **JavaDoc** for public APIs
+- Keep controllers thin, services thick
+- Use **dependency injection** (constructor injection preferred)
+
+### Lombok Annotations Used
+
+```java
+@Getter, @Setter       // Generate getters/setters
+@NoArgsConstructor     // Generate no-args constructor
+@AllArgsConstructor    // Generate all-args constructor
+@Builder               // Enable builder pattern
+@Data                  // Combines @Getter, @Setter, @ToString, etc.
+```
+
+### Adding New Features
+
+1. **Create Entity** (if needed)
+   ```java
+   @Entity
+   @Table(name = "your_table")
+   public class YourEntity { ... }
+   ```
+
+2. **Create Repository**
+   ```java
+   public interface YourRepository extends JpaRepository<YourEntity, Long> { }
+   ```
+
+3. **Create Service Interface & Implementation**
+   ```java
+   public interface YourService { ... }
+   
+   @Service
+   public class YourServiceImpl implements YourService { ... }
+   ```
+
+4. **Create Controller**
+   ```java
+   @RestController
+   @RequestMapping("/api/your-resource")
+   public class YourController { ... }
+   ```
+
+5. **Add DTOs** (if needed)
+   ```java
+   public class YourRequest { ... }
+   public class YourResponse { ... }
+   ```
+
+---
+
+## 🧪 Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+./mvnw test
+
+# Run with coverage
+./mvnw test jacoco:report
+
+# Run specific test class
+./mvnw test -Dtest=BackendApplicationTests
+
+# Skip tests during build
+./mvnw clean install -DskipTests
+```
+
+### Writing Tests
+
+#### Unit Test Example
+
+```java
+@SpringBootTest
+class AuthServiceTest {
+    
+    @Autowired
+    private AuthService authService;
+    
+    @Test
+    void testUserRegistration() {
+        AuthRequest request = new AuthRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("password123");
+        
+        AuthResponse response = authService.register(request);
+        
+        assertNotNull(response);
+        assertEquals("test@example.com", response.getEmail());
+    }
+}
+```
+
+#### Integration Test Example
+
+```java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
+class PaperSubmissionControllerTest {
+    
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @Test
+    void testSubmitPaper() throws Exception {
+        mockMvc.perform(post("/api/papers/submit")
+                .param("name", "John Doe")
+                .param("email", "john@example.com")
+                // ... more parameters
+        )
+        .andExpect(status().isOk());
+    }
+}
+```
+
+### Test Coverage
+
+Aim for:
+- **Unit Tests**: 80%+ coverage
+- **Integration Tests**: Critical user flows
+- **API Tests**: All public endpoints
+
+---
+
+## 🚀 Deployment
+
+### Building for Production
+
+```bash
+# Build JAR file
+./mvnw clean package -DskipTests
+
+# The JAR will be in target/
+ls -lh target/backend-0.0.1-SNAPSHOT.jar
+```
+
+### Deployment Options
+
+#### 1. Traditional Server (JAR)
+
+```bash
+# Run with production profile
+java -jar target/backend-0.0.1-SNAPSHOT.jar \
+  --spring.profiles.active=prod \
+  --server.port=8080
+```
+
+#### 2. Docker Deployment
+
+Create `Dockerfile`:
+
+```dockerfile
+FROM openjdk:17-slim
+WORKDIR /app
+COPY target/backend-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+Build and run:
+
+```bash
+# Build Docker image
+docker build -t saraconference-backend:latest .
+
+# Run container
+docker run -d \
+  -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/saraconference_db \
+  -e SPRING_DATASOURCE_USERNAME=postgres \
+  -e SPRING_DATASOURCE_PASSWORD=password \
+  -e AZURE_STORAGE_CONNECTION_STRING=your_connection_string \
+  -e AZURE_STORAGE_CONTAINER_NAME=papers \
+  --name saraconf-backend \
+  saraconference-backend:latest
+```
+
+#### 3. Docker Compose
+
+Create `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: saraconference_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/saraconference_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+      AZURE_STORAGE_CONTAINER_NAME: papers
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+```
+
+Run with:
+```bash
+docker-compose up -d
+```
+
+#### 4. Cloud Deployment
+
+##### Azure App Service
+
+```bash
+# Login to Azure
+az login
+
+# Create resource group
+az group create --name saraconf-rg --location eastus
+
+# Create App Service plan
+az appservice plan create \
+  --name saraconf-plan \
+  --resource-group saraconf-rg \
+  --sku B1 \
+  --is-linux
+
+# Create web app
+az webapp create \
+  --name saraconf-backend \
+  --resource-group saraconf-rg \
+  --plan saraconf-plan \
+  --runtime "JAVA:17-java17"
+
+# Configure app settings
+az webapp config appsettings set \
+  --name saraconf-backend \
+  --resource-group saraconf-rg \
+  --settings \
+    SPRING_DATASOURCE_URL="jdbc:postgresql://your-db.postgres.database.azure.com:5432/saraconference_db" \
+    SPRING_DATASOURCE_USERNAME="your_username" \
+    SPRING_DATASOURCE_PASSWORD="your_password" \
+    AZURE_STORAGE_CONNECTION_STRING="your_connection_string" \
+    AZURE_STORAGE_CONTAINER_NAME="papers"
+
+# Deploy JAR
+az webapp deploy \
+  --name saraconf-backend \
+  --resource-group saraconf-rg \
+  --src-path target/backend-0.0.1-SNAPSHOT.jar
+```
+
+##### AWS Elastic Beanstalk
+
+```bash
+# Initialize EB application
+eb init -p java-17 saraconf-backend --region us-east-1
+
+# Create environment
+eb create saraconf-env
+
+# Set environment variables
+eb setenv \
+  SPRING_DATASOURCE_URL="jdbc:postgresql://your-rds-endpoint:5432/saraconference_db" \
+  SPRING_DATASOURCE_USERNAME="admin" \
+  SPRING_DATASOURCE_PASSWORD="password" \
+  AZURE_STORAGE_CONNECTION_STRING="your_connection_string" \
+  AZURE_STORAGE_CONTAINER_NAME="papers"
+
+# Deploy
+eb deploy
+```
+
+##### Heroku
+
+```bash
+# Login to Heroku
+heroku login
+
+# Create app
+heroku create saraconf-backend
+
+# Add PostgreSQL addon
+heroku addons:create heroku-postgresql:hobby-dev
+
+# Set config vars
+heroku config:set \
+  AZURE_STORAGE_CONNECTION_STRING="your_connection_string" \
+  AZURE_STORAGE_CONTAINER_NAME="papers"
+
+# Deploy
+git push heroku main
+```
+
+### Production Checklist
+
+Before deploying to production:
+
+- [ ] Update `application.properties` with production values
+- [ ] Enable HTTPS/TLS
+- [ ] Configure proper CORS settings
+- [ ] Enable authentication/authorization
+- [ ] Set up database backups
+- [ ] Configure logging (centralized logging recommended)
+- [ ] Set up monitoring and alerting
+- [ ] Configure rate limiting
+- [ ] Review and harden security settings
+- [ ] Set up CI/CD pipeline
+- [ ] Document environment variables
+- [ ] Configure health check endpoints
+- [ ] Set up auto-scaling (if needed)
+- [ ] Review Azure Blob Storage security
+- [ ] Enable database connection pooling
+
+---
+
+## 🔒 Security
+
+### Current Security Features
+
+1. **Password Encryption**: BCrypt algorithm for password hashing
+2. **SQL Injection Protection**: JPA/Hibernate parameterized queries
+3. **CORS Configuration**: Cross-origin resource sharing enabled
+4. **Input Validation**: Basic validation on DTOs
+
+### Security Recommendations for Production
+
+#### 1. Enable JWT Authentication
+
+```java
+// Add JWT token filter
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                   HttpServletResponse response, 
+                                   FilterChain chain) {
+        // JWT validation logic
+    }
+}
+```
+
+#### 2. Configure Role-Based Access
+
+```java
+@Configuration
+@EnableMethodSecurity
+public class WebSecurityConfig {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/papers/submit").hasAnyRole("PARTICIPANT", "ADMIN")
+                .requestMatchers("/api/papers/**").authenticated()
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> 
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            );
+        return http.build();
+    }
+}
+```
+
+#### 3. Enable HTTPS
+
+```properties
+# application.properties
+server.ssl.enabled=true
+server.ssl.key-store=classpath:keystore.p12
+server.ssl.key-store-password=your_password
+server.ssl.key-store-type=PKCS12
+```
+
+#### 4. Implement Rate Limiting
+
+Use **Bucket4j** or **Resilience4j** for rate limiting:
+
+```xml
+<dependency>
+    <groupId>com.github.vladimir-bukhtoyarov</groupId>
+    <artifactId>bucket4j-core</artifactId>
+    <version>8.1.0</version>
+</dependency>
+```
+
+#### 5. Input Validation
+
+```java
+@PostMapping("/register")
+public ResponseEntity<AuthResponse> register(
+        @Valid @RequestBody AuthRequest request) {
+    // @Valid triggers validation
+}
+
+// In DTO
+public class AuthRequest {
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    private String email;
+    
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    private String password;
+}
+```
+
+#### 6. Security Headers
+
+```java
+http.headers(headers -> headers
+    .contentSecurityPolicy("default-src 'self'")
+    .frameOptions().deny()
+    .xssProtection()
+    .httpStrictTransportSecurity()
+);
+```
+
+### Secure Azure Blob Storage
+
+1. Use **Shared Access Signatures (SAS)** for time-limited access
+2. Enable **Azure AD authentication**
+3. Configure **blob access policies**
+4. Enable **soft delete** for data recovery
+
+### Security Best Practices
+
+- Never commit sensitive data (passwords, keys) to version control
+- Use environment variables for secrets
+- Regularly update dependencies for security patches
+- Implement audit logging for sensitive operations
+- Use **Azure Key Vault** for secret management
+- Enable **SQL injection** and **XSS** protection
+- Implement **CSRF tokens** for stateful sessions
+- Use **secure random** for token generation
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### 1. Application Won't Start
+
+**Problem**: `Failed to configure a DataSource`
+
+**Solution**:
+```bash
+# Ensure PostgreSQL is running
+sudo service postgresql status
+
+# Check application.properties has correct DB config
+spring.datasource.url=jdbc:postgresql://localhost:5432/saraconference_db
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+```
+
+#### 2. Azure Blob Storage Connection Fails
+
+**Problem**: `BlobServiceException: Connection refused`
+
+**Solution**:
+```properties
+# Verify connection string format
+azure.storage.connection-string=DefaultEndpointsProtocol=https;AccountName=yourAccount;AccountKey=yourKey;EndpointSuffix=core.windows.net
+
+# Test connection string with Azure Storage Explorer
+```
+
+#### 3. File Upload Fails
+
+**Problem**: `MaxUploadSizeExceededException`
+
+**Solution**:
+```properties
+# Increase max file size
+spring.servlet.multipart.max-file-size=50MB
+spring.servlet.multipart.max-request-size=50MB
+```
+
+#### 4. Port Already in Use
+
+**Problem**: `Port 8080 already in use`
+
+**Solution**:
+```bash
+# Find process using port
+lsof -i :8080  # macOS/Linux
+netstat -ano | findstr :8080  # Windows
+
+# Kill process or change port
+server.port=8081
+```
+
+#### 5. Lombok Not Working
+
+**Problem**: `Cannot resolve symbol 'get*' or 'set*'`
+
+**Solution**:
+```bash
+# IntelliJ IDEA
+# 1. Install Lombok plugin
+# 2. Settings → Build → Compiler → Annotation Processors → Enable annotation processing
+
+# Eclipse
+# 1. Download lombok.jar
+# 2. Run: java -jar lombok.jar
+# 3. Select Eclipse installation
+```
+
+#### 6. Database Migration Issues
+
+**Problem**: Schema changes not applying
+
+**Solution**:
+```properties
+# For development, use update
+spring.jpa.hibernate.ddl-auto=update
+
+# For production, use validate and use Flyway/Liquibase
+spring.jpa.hibernate.ddl-auto=validate
+```
+
+### Debug Mode
+
+Enable debug logging:
+
+```properties
+logging.level.root=INFO
+logging.level.com.saraconference.backend=DEBUG
+logging.level.org.springframework.web=DEBUG
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+```
+
+### Performance Issues
+
+1. **Enable Connection Pooling**:
+```properties
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000
+```
+
+2. **Enable Query Caching**:
+```properties
+spring.jpa.properties.hibernate.cache.use_second_level_cache=true
+spring.jpa.properties.hibernate.cache.region.factory_class=org.hibernate.cache.jcache.JCacheRegionFactory
+```
+
+3. **Optimize Queries**:
+```java
+// Use @Query with JOIN FETCH to avoid N+1 problems
+@Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.email = :email")
+Optional<User> findByEmailWithRoles(@Param("email") String email);
+```
+
+### Getting Help
+
+If you encounter issues:
+
+1. Check the **logs**: `tail -f logs/spring-boot-application.log`
+2. Enable **DEBUG logging** for more details
+3. Check **Stack Overflow** for similar issues
+4. Review **Spring Boot documentation**
+5. Check **Azure Blob Storage** troubleshooting docs
+6. Open an issue on GitHub with:
+   - Error message
+   - Stack trace
+   - Steps to reproduce
+   - Environment details
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Follow these guidelines to contribute to the project.
+
+### How to Contribute
+
+1. **Fork the Repository**
+   ```bash
+   # Click 'Fork' on GitHub
+   git clone https://github.com/YOUR_USERNAME/backend.git
+   cd backend
+   ```
+
+2. **Create a Feature Branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make Your Changes**
+   - Write clean, documented code
+   - Follow existing code style
+   - Add/update tests
+   - Update documentation
+
+4. **Test Your Changes**
+   ```bash
+   ./mvnw test
+   ./mvnw spring-boot:run
+   ```
+
+5. **Commit Your Changes**
+   ```bash
+   git add .
+   git commit -m "feat: Add your feature description"
+   ```
+
+   Use conventional commits:
+   - `feat:` New feature
+   - `fix:` Bug fix
+   - `docs:` Documentation changes
+   - `style:` Code style changes (formatting)
+   - `refactor:` Code refactoring
+   - `test:` Adding tests
+   - `chore:` Maintenance tasks
+
+6. **Push to Your Fork**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+7. **Create a Pull Request**
+   - Go to the original repository
+   - Click "New Pull Request"
+   - Select your feature branch
+   - Fill in the PR template
+   - Submit for review
+
+### Code Review Process
+
+1. Automated checks will run (build, tests, linting)
+2. Maintainers will review your code
+3. Address any feedback
+4. Once approved, your PR will be merged
+
+### Development Guidelines
+
+- **Code Style**: Follow Google Java Style Guide
+- **Testing**: Write unit tests for new features
+- **Documentation**: Update README and JavaDoc
+- **Commit Messages**: Use conventional commits
+- **Branch Naming**: `feature/`, `fix/`, `docs/`, `refactor/`
+
+### Reporting Bugs
+
+Open an issue with:
+- **Title**: Clear, descriptive summary
+- **Description**: Detailed explanation
+- **Steps to Reproduce**: Exact steps to recreate the issue
+- **Expected Behavior**: What should happen
+- **Actual Behavior**: What actually happens
+- **Environment**: OS, Java version, etc.
+- **Logs**: Relevant error messages
+
+### Feature Requests
+
+Open an issue with:
+- **Title**: Feature name
+- **Description**: What the feature should do
+- **Use Case**: Why this feature is needed
+- **Proposed Solution**: How you think it should work
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+```
+MIT License
+
+Copyright (c) 2025 SaraConference2k25
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## 📞 Contact
+
+### Project Maintainers
+
+- **Organization**: SaraConference2k25
+- **Repository**: [github.com/SaraConference2k25/backend](https://github.com/SaraConference2k25/backend)
+- **Issues**: [github.com/SaraConference2k25/backend/issues](https://github.com/SaraConference2k25/backend/issues)
+
+### Community
+
+- **Discussions**: Use GitHub Discussions for questions
+- **Bug Reports**: Use GitHub Issues
+- **Feature Requests**: Use GitHub Issues with `enhancement` label
+
+### Support
+
+For questions and support:
+1. Check this README first
+2. Search existing [GitHub Issues](https://github.com/SaraConference2k25/backend/issues)
+3. Check [Discussions](https://github.com/SaraConference2k25/backend/discussions)
+4. Create a new issue if needed
+
+---
+
+## 🙏 Acknowledgments
+
+- **Spring Boot** team for the excellent framework
+- **PostgreSQL** community for the robust database
+- **Azure** for cloud storage solutions
+- **Project Lombok** for reducing boilerplate code
+- All **contributors** who help improve this project
+
+---
+
+## 🗺 Roadmap
+
+### Upcoming Features
+
+- [ ] JWT Authentication implementation
+- [ ] Role-based access control enforcement
+- [ ] Email notification system
+- [ ] Paper review workflow
+- [ ] Admin dashboard APIs
+- [ ] Evaluator assignment system
+- [ ] Paper status tracking
+- [ ] Advanced search and filtering
+- [ ] Export functionality (PDF, Excel)
+- [ ] Audit logging system
+- [ ] API rate limiting
+- [ ] Swagger/OpenAPI documentation
+- [ ] GraphQL API support
+- [ ] WebSocket support for real-time updates
+- [ ] Multi-language support (i18n)
+
+### Version History
+
+- **v0.0.1-SNAPSHOT** (Current)
+  - Initial release
+  - Basic authentication system
+  - Paper submission functionality
+  - Azure Blob Storage integration
+  - PostgreSQL database integration
+
+---
+
+<div align="center">
+
+**⭐ Star this repository if you find it helpful!**
+
+Made with ❤️ by the SaraConference2k25 Team
+
+[Back to Top](#saraconference2k25-backend)
+
+</div>
