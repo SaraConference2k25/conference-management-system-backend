@@ -144,4 +144,20 @@ public class PaperSubmissionController {
             return ResponseEntity.status(404).body("Error deleting paper: " + e.getMessage());
         }
     }
+
+    /**
+     * Assign evaluator to a paper
+     */
+    @PostMapping("/{paperId}/assign-evaluator/{evaluatorId}")
+    public ResponseEntity<?> assignEvaluatorToPaper(
+            @PathVariable Long paperId,
+            @PathVariable Long evaluatorId) {
+        try {
+            paperSubmissionService.assignEvaluatorToPaper(paperId, evaluatorId);
+            return ResponseEntity.ok("Evaluator assigned successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error assigning evaluator: " + e.getMessage());
+        }
+    }
+
 }

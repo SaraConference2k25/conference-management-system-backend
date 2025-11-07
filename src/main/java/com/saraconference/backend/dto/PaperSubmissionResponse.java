@@ -26,6 +26,13 @@ public class PaperSubmissionResponse {
         this.submittedAt = submittedAt;
     }
 
+    public PaperSubmissionResponse(Long id, String name, String paperAbstract, String name1, String status, String s, LocalDateTime submittedAt) {
+        this.id = id;
+        this.name = name;
+        this.paperAbstract = paperAbstract;
+        this.submittedAt = submittedAt;
+    }
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

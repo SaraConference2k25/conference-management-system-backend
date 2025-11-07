@@ -36,11 +36,18 @@ public class PaperSubmission {
     @Column(nullable = false, length = 255)
     private String paperFileName;
 
+    @Column(nullable = false, length = 255)
+    private String status;
+
     @Column(nullable = false, length = 500)
     private String paperFileUrl;
 
     @Column(nullable = false)
     private LocalDateTime submittedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "evaluator_id")
+    private User evaluator;
 
 
     // Constructors
@@ -81,4 +88,8 @@ public class PaperSubmission {
 
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
+    public User getEvaluator() { return evaluator; }
+    public void setEvaluator(User evaluator) { this.evaluator = evaluator; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

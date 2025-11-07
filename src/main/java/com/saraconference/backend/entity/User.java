@@ -33,6 +33,12 @@ public class User {
     @Column(nullable = true)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = true)
+    private String department;
+
+    @Column(nullable = true)
+    private Integer workload;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -50,4 +56,11 @@ public class User {
     }
 
 
+    public Integer getWorkload() {
+        return workload;
+    }
+
+    public void setWorkload(Integer workload) {
+        this.workload = workload;
+    }
 }

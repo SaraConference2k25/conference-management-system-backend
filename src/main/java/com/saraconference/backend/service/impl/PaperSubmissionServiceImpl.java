@@ -2,7 +2,11 @@ package com.saraconference.backend.service.impl;
 
 import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.entity.PaperSubmission;
+import com.saraconference.backend.entity.Role;
+import com.saraconference.backend.entity.User;
 import com.saraconference.backend.repository.PaperSubmissionRepository;
+import com.saraconference.backend.repository.RoleRepository;
+import com.saraconference.backend.repository.UserRepository;
 import com.saraconference.backend.service.BlobStorageService;
 import com.saraconference.backend.service.PaperSubmissionService;
 import org.slf4j.Logger;
@@ -26,6 +30,11 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
     @Autowired
     private BlobStorageService blobStorageService;
 
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
     public PaperSubmissionResponse submitPaper(String name, String email, String contactNo,
                                                String department, String collegeName,
@@ -46,6 +55,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             paper.setPaperTitle(paperTitle);
             paper.setPaperAbstract(paperAbstract);
             paper.setPaperFileName(fileName);
+            paper.setStatus("PENDING ASSIGNMENT");
             paper.setPaperFileUrl(fileUrl);
             paper.setSubmittedAt(LocalDateTime.now());
 
@@ -70,6 +80,36 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             return List.of();
         }
     }
+    public void assignEvaluatorToPaper(Long paperId, Long evaluatorId) {
+        PaperSubmission paper = paperSubmissionRepository.findById(paperId)
+                .orElseThrow(() -> new RuntimeException("Paper not found"));
+
+        User evaluator = userRepository.findById(evaluatorId)
+                .orElseThrow(() -> new RuntimeException("Evaluator not found"));
+
+        // Verify user has evaluator role
+        Role evaluatorRole = roleRepository.findByRoleName("EVALUATOR")
+                .orElseThrow(() -> new RuntimeException("Evaluator role not found"));
+
+        if (!evaluator.getRoles().contains(evaluatorRole)) {
+            throw new RuntimeException("User is not an evaluator");
+        }
+        logger.info("Assigning paper to evaluator with ID: {} and with name {}", paperId, evaluator.getUsername());
+        paper.setEvaluator(evaluator);
+        evaluator.setWorkload(evaluator.getWorkload() + 1);
+        logger.info("Updated evaluator workload to: w{}", evaluator.getWorkload());
+        paperSubmissionRepository.save(paper);
+    }
+
+    public List<PaperSubmissionResponse> getPapersAssignedToEvaluator(Long evaluatorId) {
+        User evaluator = userRepository.findById(evaluatorId)
+                .orElseThrow(() -> new RuntimeException("Evaluator not found"));
+
+        return paperSubmissionRepository.findByEvaluator(evaluator).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public PaperSubmissionResponse getPaperById(Long id) {
@@ -150,6 +190,11 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             logger.error("Error retrieving papers by email {}: {}", email, e.getMessage());
             return List.of();
         }
+    }
+
+    @Override
+    public List<PaperSubmission> findByEvaluator(User evaluator) {
+        return List.of();
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.saraconference.backend.service;
 
 import com.saraconference.backend.dto.PaperSubmissionResponse;
+import com.saraconference.backend.entity.PaperSubmission;
+import com.saraconference.backend.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -48,5 +50,9 @@ public interface PaperSubmissionService {
      * Get papers by email
      */
     List<PaperSubmissionResponse> getPapersByEmail(String email);
+
+    List<PaperSubmission> findByEvaluator(User evaluator);
+
+    void assignEvaluatorToPaper(Long paperId, Long evaluatorId);
 }
 
