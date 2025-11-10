@@ -19,4 +19,5 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8069
-ENTRYPOINT ["java", "-Dserver.port=8069", "-Djava.net.preferIPv4Stack=true", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=default", "-Dserver.port=8069", "-Djava.net.preferIPv4Stack=true", "-jar", "app.jar"]
+
