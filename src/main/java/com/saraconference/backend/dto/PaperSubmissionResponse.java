@@ -14,6 +14,9 @@ public class PaperSubmissionResponse {
     private String paperFileName;
     private String paperFileUrl;
     private LocalDateTime submittedAt;
+    private String evaluatorName;
+    private String Status;
+    private String evaluatorComments;
 
     // Constructors
     public PaperSubmissionResponse() {}
@@ -66,4 +69,15 @@ public class PaperSubmissionResponse {
 
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
+    public String getEvaluatorName() { return evaluatorName; }
+    public void setEvaluatorName(String evaluatorName) {
+        this.evaluatorName = evaluatorName;
+    }
+    public String getStatus() { return Status; }
+    public void setStatus(String status) { Status = status; }
+    public String getEvaluatorComments() { return evaluatorComments; }
+    public void setEvaluatorComments(String evaluatorComments) {
+        this.evaluatorComments = evaluatorComments;
+    }
+
 }

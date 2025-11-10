@@ -54,5 +54,11 @@ public interface PaperSubmissionService {
     List<PaperSubmission> findByEvaluator(User evaluator);
 
     void assignEvaluatorToPaper(Long paperId, Long evaluatorId);
+
+    PaperSubmissionResponse updatePaperStatus(Long paperId, String status);
+
+    List<PaperSubmissionResponse> getPapersByEvaluator(User evaluator);
+
+    List<PaperSubmissionResponse> getPapersByEvaluatorUsername(String evaluatorUsername);
 }
 

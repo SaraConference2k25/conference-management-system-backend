@@ -49,6 +49,12 @@ public class PaperSubmission {
     @JoinColumn(name = "evaluator_id")
     private User evaluator;
 
+    @Column
+    private String evaluatorName;
+
+    @Column
+    private String evaluatorComments;
+
 
     // Constructors
     public PaperSubmission() {
@@ -89,7 +95,15 @@ public class PaperSubmission {
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
     public User getEvaluator() { return evaluator; }
-    public void setEvaluator(User evaluator) { this.evaluator = evaluator; }
+    public void setEvaluator(String evaluatorName) { this.evaluatorName = evaluatorName; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getEvaluatorName() { return evaluatorName; }
+    public void setEvaluatorName(String evaluatorName) {
+        this.evaluatorName = evaluatorName;
+    }
+    public String getEvaluatorComments() { return evaluatorComments; }
+    public void setEvaluatorComments(String evaluatorComments) {
+        this.evaluatorComments = evaluatorComments;
+    }
 }

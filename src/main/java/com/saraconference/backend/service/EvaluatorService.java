@@ -16,5 +16,7 @@ public interface EvaluatorService {
     long getActiveEvaluators();
     long getAvailableEvaluators();
     void assignEvaluatorToPaper(Long evaluatorId, Long paperId);
+    List<PaperSubmissionResponse> getPapersByEvaluatorUsername(String evaluatorUsername);
+
     List<PaperSubmissionResponse> getPapersAssignedToEvaluator(Long evaluatorId);
 }

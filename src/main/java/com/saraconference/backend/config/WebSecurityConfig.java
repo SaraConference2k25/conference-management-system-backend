@@ -20,12 +20,10 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                )
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:3000"));
+                    corsConfig.addAllowedOriginPattern("*"); // <--- FIX
                     corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(java.util.List.of("*"));
                     corsConfig.setAllowCredentials(true);
@@ -34,5 +32,7 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
+
 
 }

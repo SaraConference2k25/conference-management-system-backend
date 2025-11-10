@@ -1,23 +1,22 @@
-# Dockerfile
-FROM maven:3.9.8-eclipse-temurin-17 AS builder
-WORKDIR /workspace
+# ---------- Stage 1: Build ----------
+FROM maven:3.9.8-eclipse-temurin-17 AS build
 
-# copy only pom first for better cache usage
+WORKDIR /app
+
+# Cache dependencies first (VERY IMPORTANT)
 COPY pom.xml .
-COPY src ./src
+RUN mvn dependency:go-offline -B
 
-# build the application (skip tests for faster builds; remove -DskipTests to run tests)
+# Now copy source and package
+COPY src ./src
 RUN mvn -B -DskipTests package
 
+
+# ---------- Stage 2: Runtime ----------
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Optional: set a default JAVA_OPTS, can be overridden when running the container
-ENV JAVA_OPTS=""
+COPY --from=build /app/target/*.jar app.jar
 
-# copy the built jar from the builder stage (matches the first jar in target/)
-COPY --from=builder /workspace/target/*.jar app.jar
-
-EXPOSE 8069
-
-ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,10 +95,12 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
         if (!evaluator.getRoles().contains(evaluatorRole)) {
             throw new RuntimeException("User is not an evaluator");
         }
-        logger.info("Assigning paper to evaluator with ID: {} and with name {}", paperId, evaluator.getUsername());
-        paper.setEvaluator(evaluator);
-        evaluator.setWorkload(evaluator.getWorkload() + 1);
+        Integer currentWorkload = evaluator.getWorkload() != null ? evaluator.getWorkload() : 0;
+        evaluator.setWorkload(currentWorkload + 1);
+        logger.info("Assigning paper to evaluator with ID: {}", paper.getId());
         logger.info("Updated evaluator workload to: w{}", evaluator.getWorkload());
+        paper.setEvaluator(evaluator.getUsername());
+        logger.info("Assigning paper to evaluator with ID: {} and with name {}", paperId, evaluator.getUsername());
         paperSubmissionRepository.save(paper);
     }
 
@@ -160,6 +163,41 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             throw new RuntimeException("Error downloading paper", e);
         }
     }
+    @Override
+    public PaperSubmissionResponse updatePaperStatus(Long paperId, String status) {
+        try {
+            PaperSubmission paper = paperSubmissionRepository.findById(paperId)
+                    .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + paperId));
+
+            paper.setStatus(status);
+            PaperSubmission updatedPaper = paperSubmissionRepository.save(paper);
+            logger.info("Paper status updated successfully for ID: {}", paperId);
+            return convertToResponse(updatedPaper);
+        } catch (Exception e) {
+            logger.error("Error updating paper status for ID {}: {}", paperId, e.getMessage());
+            throw new RuntimeException("Error updating paper status", e);
+        }
+    }
+    @Override
+    public List<PaperSubmissionResponse> getPapersByEvaluator(User evaluator) {
+        return paperSubmissionRepository.findByEvaluator(evaluator)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PaperSubmissionResponse> getPapersByEvaluatorUsername(String evaluatorUsername) {
+        User evaluator = userRepository.findByUsername(evaluatorUsername)
+                .orElseThrow(() -> new RuntimeException("Evaluator not found"));
+
+        return paperSubmissionRepository.findByEvaluator(evaluator).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+
+
 
     @Override
     public void deletePaper(Long id) {
@@ -213,6 +251,9 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
         response.setPaperFileName(paper.getPaperFileName());
         response.setPaperFileUrl(paper.getPaperFileUrl());
         response.setSubmittedAt(paper.getSubmittedAt());
+        response.setEvaluatorName(paper.getEvaluatorName());
+        response.setEvaluatorComments(paper.getEvaluatorComments());
+        response.setStatus(paper.getStatus());
         return response;
     }
 }

@@ -1,6 +1,7 @@
 package com.saraconference.backend.controller;
 
 import com.saraconference.backend.dto.PaperSubmissionResponse;
+import com.saraconference.backend.entity.User;
 import com.saraconference.backend.service.PaperSubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +75,14 @@ public class PaperSubmissionController {
             return ResponseEntity.status(404).body("Paper not found: " + e.getMessage());
         }
     }
+    @GetMapping("/evaluator/{evaluatorUsername}")
+    public ResponseEntity<List<PaperSubmissionResponse>> getPapersByEvaluator(
+            @PathVariable String evaluatorUsername) {
+        List<PaperSubmissionResponse> papers = paperSubmissionService.getPapersByEvaluatorUsername(evaluatorUsername);
+        return ResponseEntity.ok(papers);
+    }
+
+
 
     /**
      * Download paper file
@@ -157,6 +166,16 @@ public class PaperSubmissionController {
             return ResponseEntity.ok("Evaluator assigned successfully");
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Error assigning evaluator: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> updatePaperStatus(@RequestParam Long paperId, @RequestParam String status) {
+        try {
+            PaperSubmissionResponse updatedPaper = paperSubmissionService.updatePaperStatus(paperId, status);
+            return ResponseEntity.ok(updatedPaper);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error updating paper status: " + e.getMessage());
         }
     }
 

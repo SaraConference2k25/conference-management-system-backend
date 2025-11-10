@@ -37,7 +37,7 @@ public class User {
     private String department;
 
     @Column(nullable = true)
-    private Integer workload;
+    private Integer workload = 0;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

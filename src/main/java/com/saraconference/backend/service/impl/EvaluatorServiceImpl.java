@@ -191,9 +191,21 @@ public class EvaluatorServiceImpl implements EvaluatorService {
             throw new RuntimeException("User is not an evaluator");
         }
 
-        paper.setEvaluator(evaluator);
+        paper.setEvaluator(evaluator.getUsername());
         paperRepository.save(paper);
     }
+
+    @Override
+    public List<PaperSubmissionResponse> getPapersByEvaluatorUsername(String evaluatorUsername) {
+        User evaluator = userRepository.findByUsername(evaluatorUsername)
+                .orElseThrow(() -> new RuntimeException("Evaluator not found"));
+
+        return paperRepository.findByEvaluator(evaluator).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+
 
     @Override
     public List<PaperSubmissionResponse> getPapersAssignedToEvaluator(Long evaluatorId) {
