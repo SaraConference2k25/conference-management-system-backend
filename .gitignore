@@ -36,3 +36,5 @@ application.properties
 application.yml
 application-*.properties
 application-*.yml
+
+!src/main/resources/application-azure.properties

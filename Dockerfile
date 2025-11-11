@@ -16,8 +16,14 @@ RUN mvn -B -DskipTests package
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
+# Disable Java Booster if Azure tries to attach it
+ENV JAVA_TOOL_OPTIONS=""
+
+# Set default profile (used when running locally or docker run)
+ENV SPRING_PROFILES_ACTIVE=local
+
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8069
-ENTRYPOINT ["java", "-Dspring.profiles.active=default", "-Dserver.port=8069", "-Djava.net.preferIPv4Stack=true", "-jar", "app.jar"]
 
+ENTRYPOINT ["java", "-Dserver.port=8069", "-jar", "app.jar"]
