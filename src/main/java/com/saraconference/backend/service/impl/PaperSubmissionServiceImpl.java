@@ -4,6 +4,7 @@ import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.entity.PaperSubmission;
 import com.saraconference.backend.entity.Role;
 import com.saraconference.backend.entity.User;
+import com.saraconference.backend.enums.PaperStatus;
 import com.saraconference.backend.repository.PaperSubmissionRepository;
 import com.saraconference.backend.repository.RoleRepository;
 import com.saraconference.backend.repository.UserRepository;
@@ -15,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.saraconference.backend.util.PaperIdGenerator;
+
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
 
             // Create paper submission
             PaperSubmission paper = new PaperSubmission();
+            paper.setPaperId(generateUniquePaperId());
             paper.setName(name);
             paper.setEmail(email);
             paper.setContactNo(contactNo);
@@ -56,7 +59,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             paper.setPaperTitle(paperTitle);
             paper.setPaperAbstract(paperAbstract);
             paper.setPaperFileName(fileName);
-            paper.setStatus("PENDING ASSIGNMENT");
+            paper.setStatus(PaperStatus.PENDING_ASSIGNMENT);
             paper.setPaperFileUrl(fileUrl);
             paper.setSubmittedAt(LocalDateTime.now());
 
@@ -65,7 +68,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             return convertToResponse(savedPaper);
         } catch (Exception e) {
             logger.error("Error submitting paper: {}", e.getMessage());
-            throw new Exception("Error submitting paper: " + e.getMessage(), e);
+            throw new Exception("Error submitting paper: " + e.getMessage());
         }
     }
 
@@ -81,25 +84,27 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             return List.of();
         }
     }
-    public void assignEvaluatorToPaper(Long paperId, Long evaluatorId) {
-        PaperSubmission paper = paperSubmissionRepository.findById(paperId)
+    public void assignEvaluatorToPaper(String paperId, Long evaluatorId) {
+        PaperSubmission paper = paperSubmissionRepository.findByPaperId(paperId)
                 .orElseThrow(() -> new RuntimeException("Paper not found"));
-
+        logger.info("Assign evaluator to Paper ID: {}", paperId);
         User evaluator = userRepository.findById(evaluatorId)
                 .orElseThrow(() -> new RuntimeException("Evaluator not found"));
-
+        logger.info("Assign evaluator to User: {}", evaluator);
         // Verify user has evaluator role
         Role evaluatorRole = roleRepository.findByRoleName("EVALUATOR")
                 .orElseThrow(() -> new RuntimeException("Evaluator role not found"));
-
+        logger.info("Assign evaluator to Role: {}", evaluatorRole);
         if (!evaluator.getRoles().contains(evaluatorRole)) {
             throw new RuntimeException("User is not an evaluator");
         }
         Integer currentWorkload = evaluator.getWorkload() != null ? evaluator.getWorkload() : 0;
         evaluator.setWorkload(currentWorkload + 1);
-        logger.info("Assigning paper to evaluator with ID: {}", paper.getId());
+        logger.info("Assigning paper to evaluator with ID: {}", paper.getPaperId());
         logger.info("Updated evaluator workload to: w{}", evaluator.getWorkload());
-        paper.setEvaluator(evaluator.getUsername());
+        paper.setEvaluator(evaluator);
+        paper.setEvaluatorName(evaluator.getUsername());
+        logger.info("Assigned paper to evaluator with ID: {}", paper.getId());
         logger.info("Assigning paper to evaluator with ID: {} and with name {}", paperId, evaluator.getUsername());
         paperSubmissionRepository.save(paper);
     }
@@ -115,9 +120,9 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
 
 
     @Override
-    public PaperSubmissionResponse getPaperById(Long id) {
+    public PaperSubmissionResponse getPaperById(String id) {
         try {
-            PaperSubmission paper = paperSubmissionRepository.findById(id)
+            PaperSubmission paper = paperSubmissionRepository.findByPaperId(id)
                     .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + id));
             return convertToResponse(paper);
         } catch (Exception e) {
@@ -153,9 +158,9 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
     }
 
     @Override
-    public byte[] downloadPaper(Long id) {
+    public byte[] downloadPaper(String id) {
         try {
-            PaperSubmission paper = paperSubmissionRepository.findById(id)
+            PaperSubmission paper = paperSubmissionRepository.findByPaperId(id)
                     .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + id));
             return blobStorageService.downloadFile(paper.getPaperFileName());
         } catch (Exception e) {
@@ -163,10 +168,11 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             throw new RuntimeException("Error downloading paper", e);
         }
     }
+
     @Override
-    public PaperSubmissionResponse updatePaperStatus(Long paperId, String status) {
+    public PaperSubmissionResponse updatePaperStatus(String paperId, PaperStatus status) {
         try {
-            PaperSubmission paper = paperSubmissionRepository.findById(paperId)
+            PaperSubmission paper = paperSubmissionRepository.findByPaperId(paperId)
                     .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + paperId));
 
             paper.setStatus(status);
@@ -217,6 +223,17 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
         }
     }
 
+    public boolean checkIfPaperExists(String paperId) {
+        return paperSubmissionRepository.existsByPaperId(paperId);
+    }
+
+    public PaperSubmissionResponse getPaperByPaperId(String paperId) {
+        return paperSubmissionRepository.findByPaperId(paperId)
+                .map(this::convertToResponse)
+                .orElseThrow(() -> new RuntimeException("Paper not found"));
+    }
+
+
     @Override
     public List<PaperSubmissionResponse> getPapersByEmail(String email) {
         try {
@@ -240,7 +257,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
      */
     private PaperSubmissionResponse convertToResponse(PaperSubmission paper) {
         PaperSubmissionResponse response = new PaperSubmissionResponse();
-        response.setId(paper.getId());
+        response.setPaperId(paper.getPaperId());
         response.setName(paper.getName());
         response.setEmail(paper.getEmail());
         response.setContactNo(paper.getContactNo());
@@ -254,8 +271,17 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
         response.setEvaluatorName(paper.getEvaluatorName());
         response.setEvaluatorComments(paper.getEvaluatorComments());
         response.setStatus(paper.getStatus());
+        logger.warn("The paper status in convertToResponse is: {}", paper.getStatus());
         return response;
     }
+    public String generateUniquePaperId() {
+        String paperId;
+        do {
+            paperId = PaperIdGenerator.generatePaperId();
+        } while (paperSubmissionRepository.existsByPaperId(paperId));
+        return paperId;
+    }
+
 }
 
 

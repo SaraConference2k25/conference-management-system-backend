@@ -1,19 +1,22 @@
 package com.saraconference.backend.controller;
 
 import com.saraconference.backend.dto.PaperSubmissionResponse;
-import com.saraconference.backend.entity.User;
+import com.saraconference.backend.enums.PaperStatus;
 import com.saraconference.backend.service.PaperSubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/papers")
 @CrossOrigin(origins = "*")
 public class PaperSubmissionController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PaperSubmissionController.class);
 
     @Autowired
     private PaperSubmissionService paperSubmissionService;
@@ -67,7 +70,7 @@ public class PaperSubmissionController {
      * Get paper by ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPaperById(@PathVariable Long id) {
+    public ResponseEntity<?> getPaperById(@PathVariable String id) {
         try {
             PaperSubmissionResponse paper = paperSubmissionService.getPaperById(id);
             return ResponseEntity.ok(paper);
@@ -75,6 +78,7 @@ public class PaperSubmissionController {
             return ResponseEntity.status(404).body("Paper not found: " + e.getMessage());
         }
     }
+
     @GetMapping("/evaluator/{evaluatorUsername}")
     public ResponseEntity<List<PaperSubmissionResponse>> getPapersByEvaluator(
             @PathVariable String evaluatorUsername) {
@@ -83,12 +87,11 @@ public class PaperSubmissionController {
     }
 
 
-
     /**
      * Download paper file
      */
     @GetMapping("/download/{id}")
-    public ResponseEntity<?> downloadPaper(@PathVariable Long id) {
+    public ResponseEntity<?> downloadPaper(@PathVariable String id) {
         try {
             byte[] fileContent = paperSubmissionService.downloadPaper(id);
             PaperSubmissionResponse paper = paperSubmissionService.getPaperById(id);
@@ -159,7 +162,7 @@ public class PaperSubmissionController {
      */
     @PostMapping("/{paperId}/assign-evaluator/{evaluatorId}")
     public ResponseEntity<?> assignEvaluatorToPaper(
-            @PathVariable Long paperId,
+            @PathVariable String paperId,
             @PathVariable Long evaluatorId) {
         try {
             paperSubmissionService.assignEvaluatorToPaper(paperId, evaluatorId);
@@ -169,14 +172,15 @@ public class PaperSubmissionController {
         }
     }
 
-    @PatchMapping
-    public ResponseEntity<?> updatePaperStatus(@RequestParam Long paperId, @RequestParam String status) {
+    @PatchMapping("/update-status")
+    public ResponseEntity<?> updatePaperStatus(@RequestParam String paperId,
+                                               @RequestParam PaperStatus status) {
         try {
             PaperSubmissionResponse updatedPaper = paperSubmissionService.updatePaperStatus(paperId, status);
+            logger.debug("Updated paper status: {}", updatedPaper);
             return ResponseEntity.ok(updatedPaper);
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Error updating paper status: " + e.getMessage());
         }
     }
-
 }

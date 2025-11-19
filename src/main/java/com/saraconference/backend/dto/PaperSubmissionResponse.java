@@ -1,9 +1,11 @@
 package com.saraconference.backend.dto;
 
+import com.saraconference.backend.enums.PaperStatus;
+
 import java.time.LocalDateTime;
 
 public class PaperSubmissionResponse {
-    private Long id;
+    private String paperId;
     private String name;
     private String email;
     private String contactNo;
@@ -15,30 +17,26 @@ public class PaperSubmissionResponse {
     private String paperFileUrl;
     private LocalDateTime submittedAt;
     private String evaluatorName;
-    private String Status;
+    private PaperStatus Status;
     private String evaluatorComments;
 
     // Constructors
     public PaperSubmissionResponse() {}
 
     public PaperSubmissionResponse(Long id, String name, String email, String paperTitle, LocalDateTime submittedAt) {
-        this.id = id;
         this.name = name;
         this.email = email;
         this.paperTitle = paperTitle;
         this.submittedAt = submittedAt;
     }
 
-    public PaperSubmissionResponse(Long id, String name, String paperAbstract, String name1, String status, String s, LocalDateTime submittedAt) {
-        this.id = id;
+    public PaperSubmissionResponse(Long id, String name, String paperAbstract, String name1, PaperStatus status, String s, LocalDateTime submittedAt) {
         this.name = name;
         this.paperAbstract = paperAbstract;
         this.submittedAt = submittedAt;
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -73,11 +71,18 @@ public class PaperSubmissionResponse {
     public void setEvaluatorName(String evaluatorName) {
         this.evaluatorName = evaluatorName;
     }
-    public String getStatus() { return Status; }
-    public void setStatus(String status) { Status = status; }
+    public PaperStatus getStatus() { return Status; }
+    public void setStatus(PaperStatus status) { Status = status; }
     public String getEvaluatorComments() { return evaluatorComments; }
     public void setEvaluatorComments(String evaluatorComments) {
         this.evaluatorComments = evaluatorComments;
     }
 
+    public void setPaperId(String paperId) {
+        this.paperId = paperId;
+    }
+
+    public String getPaperId() {
+        return paperId;
+    }
 }

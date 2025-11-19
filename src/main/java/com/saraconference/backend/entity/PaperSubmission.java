@@ -1,6 +1,6 @@
 package com.saraconference.backend.entity;
 
-
+import com.saraconference.backend.enums.PaperStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -11,6 +11,9 @@ public class PaperSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 20, unique = true)
+    private String paperId;
 
     @Column(nullable = false, length = 255)
     private String name;
@@ -36,8 +39,9 @@ public class PaperSubmission {
     @Column(nullable = false, length = 255)
     private String paperFileName;
 
-    @Column(nullable = false, length = 255)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private PaperStatus status = PaperStatus.PENDING_ASSIGNMENT;
 
     @Column(nullable = false, length = 500)
     private String paperFileUrl;
@@ -55,15 +59,14 @@ public class PaperSubmission {
     @Column
     private String evaluatorComments;
 
-
-    // Constructors
     public PaperSubmission() {
         this.submittedAt = LocalDateTime.now();
     }
-
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getPaperId() { return paperId; }
+    public void setPaperId(String paperId) { this.paperId = paperId; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -94,16 +97,16 @@ public class PaperSubmission {
 
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
+
     public User getEvaluator() { return evaluator; }
-    public void setEvaluator(String evaluatorName) { this.evaluatorName = evaluatorName; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public void setEvaluator(User evaluator) { this.evaluator = evaluator; }
+
+    public PaperStatus getStatus() { return status; }
+    public void setStatus(PaperStatus status) { this.status = status; }
+
     public String getEvaluatorName() { return evaluatorName; }
-    public void setEvaluatorName(String evaluatorName) {
-        this.evaluatorName = evaluatorName;
-    }
+    public void setEvaluatorName(String evaluatorName) { this.evaluatorName = evaluatorName; }
+
     public String getEvaluatorComments() { return evaluatorComments; }
-    public void setEvaluatorComments(String evaluatorComments) {
-        this.evaluatorComments = evaluatorComments;
-    }
+    public void setEvaluatorComments(String evaluatorComments) { this.evaluatorComments = evaluatorComments; }
 }

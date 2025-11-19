@@ -191,7 +191,7 @@ public class EvaluatorServiceImpl implements EvaluatorService {
             throw new RuntimeException("User is not an evaluator");
         }
 
-        paper.setEvaluator(evaluator.getUsername());
+        paper.setEvaluator(evaluator);
         paperRepository.save(paper);
     }
 

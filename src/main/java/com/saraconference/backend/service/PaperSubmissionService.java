@@ -3,6 +3,7 @@ package com.saraconference.backend.service;
 import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.entity.PaperSubmission;
 import com.saraconference.backend.entity.User;
+import com.saraconference.backend.enums.PaperStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public interface PaperSubmissionService {
     /**
      * Get paper by ID
      */
-    PaperSubmissionResponse getPaperById(Long id);
+
+    PaperSubmissionResponse getPaperById(String id);
 
     /**
      * Get papers by department
@@ -39,7 +41,7 @@ public interface PaperSubmissionService {
     /**
      * Download paper file
      */
-    byte[] downloadPaper(Long id);
+    byte[] downloadPaper(String id);
 
     /**
      * Delete paper
@@ -53,9 +55,10 @@ public interface PaperSubmissionService {
 
     List<PaperSubmission> findByEvaluator(User evaluator);
 
-    void assignEvaluatorToPaper(Long paperId, Long evaluatorId);
+    void assignEvaluatorToPaper(String paperId, Long evaluatorId);
 
-    PaperSubmissionResponse updatePaperStatus(Long paperId, String status);
+    PaperSubmissionResponse updatePaperStatus(String paperId, PaperStatus status);
+    
 
     List<PaperSubmissionResponse> getPapersByEvaluator(User evaluator);
 
