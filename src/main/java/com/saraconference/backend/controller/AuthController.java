@@ -1,5 +1,6 @@
 package com.saraconference.backend.controller;
 
+import com.saraconference.backend.Exception.BadRequestException;
 import com.saraconference.backend.dto.AuthRequest;
 import com.saraconference.backend.dto.AuthResponse;
 import com.saraconference.backend.dto.LoginRequest;
@@ -27,11 +28,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        String email = request.getEmail();
-        String password = request.getPassword();
-        String requestedRole = request.getRole();
-        logger.info("Login attempt for email: {} and  {} with requested role: {}", email, password, requestedRole);
-        return ResponseEntity.ok(authService.login(email,password,requestedRole));
+    public ResponseEntity<LoginResponse> login(@RequestBody AuthRequest request) {
+       if(request.getEmail() == null || request.getEmail().isBlank()){
+           logger.warn("Login attempt with missing email");
+           throw new BadRequestException("Email is required");
+       }
+
+         if(request.getPassword() == null || request.getPassword().isBlank()){
+              logger.warn("Login attempt with missing password for email: {}", request.getEmail());
+              throw new BadRequestException("Password is required");
+         }
+         logger.debug("The role is {}", request.getRole());
+          LoginResponse response = authService.login(request.getEmail(), request.getPassword(), request.getRole());
+          return ResponseEntity.ok(response);
     }
 }

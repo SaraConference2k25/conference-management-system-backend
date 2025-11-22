@@ -2,7 +2,9 @@ package com.saraconference.backend.service;
 
 import com.saraconference.backend.dto.CreateEvaluatorRequest;
 import com.saraconference.backend.dto.EvaluatorResponse;
+import com.saraconference.backend.dto.PaperSubmissionRequest;
 import com.saraconference.backend.dto.PaperSubmissionResponse;
+import com.saraconference.backend.entity.PaperSubmission;
 
 import java.util.List;
 
@@ -19,4 +21,6 @@ public interface EvaluatorService {
     List<PaperSubmissionResponse> getPapersByEvaluatorUsername(String evaluatorUsername);
 
     List<PaperSubmissionResponse> getPapersAssignedToEvaluator(Long evaluatorId);
+
+    PaperSubmissionResponse evaluatePaper(PaperSubmissionRequest request);
 }

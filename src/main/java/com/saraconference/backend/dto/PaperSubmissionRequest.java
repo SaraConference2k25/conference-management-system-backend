@@ -1,10 +1,22 @@
 package com.saraconference.backend.dto;
 
+
+import com.saraconference.backend.entity.User;
+import com.saraconference.backend.enums.PaperStatus;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class PaperSubmissionRequest {
+    private String paperId;
     private String paperTitle;
     private String paperAbstract;
     private String department;
     private String collegeName;
+    private User evaluator;
+    private String evaluatorComments;
+    private PaperStatus status;
 
     // Constructors
     public PaperSubmissionRequest() {}
@@ -16,16 +28,5 @@ public class PaperSubmissionRequest {
         this.collegeName = collegeName;
     }
 
-    // Getters and Setters
-    public String getPaperTitle() { return paperTitle; }
-    public void setPaperTitle(String paperTitle) { this.paperTitle = paperTitle; }
 
-    public String getPaperAbstract() { return paperAbstract; }
-    public void setPaperAbstract(String paperAbstract) { this.paperAbstract = paperAbstract; }
-
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
-
-    public String getCollegeName() { return collegeName; }
-    public void setCollegeName(String collegeName) { this.collegeName = collegeName; }
 }

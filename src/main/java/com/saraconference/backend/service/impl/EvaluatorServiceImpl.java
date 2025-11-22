@@ -2,6 +2,7 @@ package com.saraconference.backend.service.impl;
 
 import com.saraconference.backend.dto.CreateEvaluatorRequest;
 import com.saraconference.backend.dto.EvaluatorResponse;
+import com.saraconference.backend.dto.PaperSubmissionRequest;
 import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.entity.PaperSubmission;
 import com.saraconference.backend.entity.Role;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.saraconference.backend.service.EmailService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 public class EvaluatorServiceImpl implements EvaluatorService {
     private Logger logger = LoggerFactory.getLogger(EvaluatorServiceImpl.class);
 
+    @Autowired
+    private EmailService emailService;
     @Autowired
     private UserRepository userRepository;
 
@@ -229,5 +232,43 @@ public class EvaluatorServiceImpl implements EvaluatorService {
                 paper.getEvaluator() != null ? paper.getEvaluator().getUsername() : null,
                 paper.getSubmittedAt()
         );
+    }
+    @Override
+    public PaperSubmissionResponse evaluatePaper(PaperSubmissionRequest request) {
+        PaperSubmission paper = paperRepository.findByPaperId(request.getPaperId())
+                .orElseThrow(() -> new RuntimeException("Paper not found"));
+        logger.info("The paper to be evaluated: {}", paper.getPaperTitle());
+
+        User evaluator = userRepository.findById(paper.getEvaluator().getUserId())
+                .orElseThrow(() -> new RuntimeException("Evaluator not found"));
+        logger.info("The evaluator evaluating is : {}", evaluator.getUsername());
+        paper.setEvaluatorComments(request.getEvaluatorComments());
+        paper.setStatus(request.getStatus());
+        logger.info("Paper {} status set to {}", paper.getPaperTitle(), request.getStatus());
+        paperRepository.save(paper);
+        logger.info("Paper {} evaluated by {}", paper.getPaperTitle(), evaluator.getUsername());
+        switch (request.getStatus()) {
+            case ACCEPTED:
+                logger.info("Paper {} has been accepted.", paper.getPaperTitle());
+                emailService.sendAcceptanceEmail(paper.getEmail(), paper.getPaperTitle());
+                break;
+            case REJECTED:
+                emailService.sendRejectionEmail(paper.getEmail(), paper.getPaperTitle());
+                logger.info("Paper {} has been rejected.", paper.getPaperTitle());
+                break;
+            default:
+                logger.info("Paper {} status updated to {}.", paper.getPaperTitle(), request.getStatus());
+                break;
+        }
+        logger.debug("The evaluator workload before evaluation is : {}", evaluator.getWorkload());
+        if(evaluator.getWorkload() <= 0){
+            evaluator.setWorkload(0);
+        } else {
+            evaluator.setWorkload(evaluator.getWorkload() - 1);
+        }
+        logger.debug("The evaluvator workload after evaluation is : {}", evaluator.getWorkload());
+        userRepository.save(evaluator);
+        paperRepository.save(paper);
+        return convertToResponse(paper);
     }
 }

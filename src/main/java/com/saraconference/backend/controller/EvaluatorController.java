@@ -2,6 +2,8 @@ package com.saraconference.backend.controller;
 
 import com.saraconference.backend.dto.CreateEvaluatorRequest;
 import com.saraconference.backend.dto.EvaluatorResponse;
+import com.saraconference.backend.dto.PaperSubmissionRequest;
+import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.service.EvaluatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -119,5 +121,11 @@ public class EvaluatorController {
                         put("error", e.getMessage());
                     }});
         }
+    }
+
+    @PostMapping("/evaluate-paper")
+    public ResponseEntity<PaperSubmissionResponse> evaluatePaper(@RequestBody PaperSubmissionRequest request){
+       PaperSubmissionResponse response =  evaluatorService.evaluatePaper(request);
+        return ResponseEntity.ok().body(response);
     }
 }
