@@ -15,7 +15,11 @@
 	<description>The backend for SaraConference</description>
 	<url/>
 	<licenses>
-		<license/>
+		<license>
+			<name>Proprietary</name>
+			<comments>Copyright (c) 2025 SaraConference2k25 Organization. All Rights Reserved.</comments>
+			<distribution>manual</distribution>
+		</license>
 	</licenses>
 	<developers>
 		<developer/>
