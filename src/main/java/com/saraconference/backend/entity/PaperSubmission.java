@@ -5,7 +5,16 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "paper_submissions")
+@Table(name = "paper_submissions", indexes = {
+        @Index(name = "idx_paper_id", columnList = "paper_id"),
+        @Index(name = "idx_email", columnList = "email"),
+        @Index(name = "idx_department", columnList = "department"),
+        @Index(name = "idx_status", columnList = "status"),
+        @Index(name = "idx_evaluator_id", columnList = "evaluator_id"),
+        @Index(name = "idx_paper_title", columnList = "paper_title"),
+        @Index(name = "idx_submitted_at", columnList = "submitted_at"),
+        @Index(name = "idx_evaluator_status", columnList = "evaluator_id, status")
+})
 public class PaperSubmission {
 
     @Id
