@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebSecurityConfig {
@@ -23,16 +21,14 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfig.addAllowedOriginPattern("*"); // <--- FIX
+                    corsConfig.addAllowedOriginPattern("http://localhost:.*");
+                    corsConfig.addAllowedOriginPattern("https://saraconference2k25.netlify.app");
                     corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
                     corsConfig.setAllowedHeaders(java.util.List.of("*"));
-                    corsConfig.setAllowCredentials(true);
+                    corsConfig.setAllowCredentials(false); // Changed to false
                     return corsConfig;
                 }));
 
         return http.build();
     }
-
-
-
 }
