@@ -18,7 +18,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/evaluators")
-@CrossOrigin(origins = "*")
 @PreAuthorize("hasRole('ADMIN')")
 public class EvaluatorController {
     private static final Logger logger = LoggerFactory.getLogger(EvaluatorController.class);
