@@ -34,13 +34,7 @@ public class WebSecurityConfig {
                     corsConfig.setAllowCredentials(true);
 
                     return corsConfig;
-                }))
-
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyRequest().permitAll()
-                );
-
+                }));
         return http.build();
     }
 

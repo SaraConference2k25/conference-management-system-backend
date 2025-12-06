@@ -1,6 +1,7 @@
 package com.saraconference.backend.controller;
 
 import com.saraconference.backend.dto.PaperSubmissionResponse;
+import com.saraconference.backend.dto.UpdatePaperStatusRequest;
 import com.saraconference.backend.enums.PaperStatus;
 import com.saraconference.backend.service.PaperSubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,14 +173,13 @@ public class PaperSubmissionController {
     }
 
     @PatchMapping("/update-status")
-    public ResponseEntity<?> updatePaperStatus(
-            @RequestParam("paperId") String paperId,
-            @RequestParam("status") PaperStatus status) {
-        logger.debug("The recived paperId is: {} and status is: {} and their type is {} , {} ", paperId, status,
-                paperId.getClass().getName(), status.getClass().getName());;
+    public ResponseEntity<?> updatePaperStatus(@RequestBody UpdatePaperStatusRequest request) {
         try {
-            logger.debug("The recived paperId is: {} and status is: {} and their type is {} , {} ", paperId, status,
-                    paperId.getClass().getName(), status.getClass().getName());;
+            String paperId = request.getPaperId();
+            PaperStatus status = request.getStatus();
+
+            logger.debug("The received paperId is: {} and status is: {}", paperId, status);
+
             PaperSubmissionResponse updatedPaper = paperSubmissionService.updatePaperStatus(paperId, status);
             logger.debug("Updated paper status: {}", updatedPaper);
             return ResponseEntity.ok(updatedPaper);
@@ -187,4 +187,5 @@ public class PaperSubmissionController {
             return ResponseEntity.status(400).body("Error updating paper status: " + e.getMessage());
         }
     }
+
 }
