@@ -1,3 +1,5 @@
+
+
 package com.saraconference.backend.config;
 
 import org.springframework.context.annotation.Bean;
@@ -8,36 +10,39 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import java.util.List;
 
-
 @Configuration
 public class WebSecurityConfig {
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-            .cors(cors -> cors.configurationSource(request -> {
-                var corsConfig = new org.springframework.web.cors.CorsConfiguration();
 
-                corsConfig.setAllowedOriginPatterns(List.of(
-                        "http://localhost:*",
-                        "https://saraconference2k25.netlify.app"
-                ));
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
 
-                corsConfig.setAllowedMethods(List.of(
-                        "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
-                ));
+                    corsConfig.setAllowedOriginPatterns(List.of(
+                            "http://localhost:*",
+                            "https://saraconference2k25.netlify.app"
+                    ));
 
-                corsConfig.setAllowedHeaders(List.of("*"));
-                corsConfig.setExposedHeaders(List.of("*"));
+                    corsConfig.setAllowedMethods(List.of(
+                            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
+                    ));
 
-                corsConfig.setAllowCredentials(true);  // IMPORTANT
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setExposedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
 
-                return corsConfig;
-            }));
+                    return corsConfig;
+                }))
 
-    return http.build();
-}
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyRequest().permitAll()
+                );
+
+        return http.build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
