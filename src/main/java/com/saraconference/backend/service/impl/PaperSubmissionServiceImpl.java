@@ -172,6 +172,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
     @Override
     public PaperSubmissionResponse updatePaperStatus(String paperId, PaperStatus status) {
         try {
+
             PaperSubmission paper = paperSubmissionRepository.findByPaperId(paperId)
                     .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + paperId));
 

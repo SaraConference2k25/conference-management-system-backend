@@ -172,9 +172,14 @@ public class PaperSubmissionController {
     }
 
     @PatchMapping("/update-status")
-    public ResponseEntity<?> updatePaperStatus(@RequestParam String paperId,
-                                               @RequestParam PaperStatus status) {
+    public ResponseEntity<?> updatePaperStatus(
+            @RequestParam("paperId") String paperId,
+            @RequestParam("status") PaperStatus status) {
+        logger.debug("The recived paperId is: {} and status is: {} and their type is {} , {} ", paperId, status,
+                paperId.getClass().getName(), status.getClass().getName());;
         try {
+            logger.debug("The recived paperId is: {} and status is: {} and their type is {} , {} ", paperId, status,
+                    paperId.getClass().getName(), status.getClass().getName());;
             PaperSubmissionResponse updatedPaper = paperSubmissionService.updatePaperStatus(paperId, status);
             logger.debug("Updated paper status: {}", updatedPaper);
             return ResponseEntity.ok(updatedPaper);
