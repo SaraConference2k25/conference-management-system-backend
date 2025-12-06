@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/papers")
-@CrossOrigin(origins = "https://saraconference2k25.netlify.app")
+@CrossOrigin(origins = "*")
 public class PaperSubmissionController {
 
     private static final Logger logger = LoggerFactory.getLogger(PaperSubmissionController.class);

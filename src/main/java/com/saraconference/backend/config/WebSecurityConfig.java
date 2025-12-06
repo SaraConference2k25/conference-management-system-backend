@@ -21,7 +21,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfig.addAllowedOriginPattern("http://localhost:.*");
+                    corsConfig.addAllowedOriginPattern("http://localhost:*");
                     corsConfig.addAllowedOriginPattern("https://saraconference2k25.netlify.app");
                     corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
                     corsConfig.setAllowedHeaders(java.util.List.of("*"));
