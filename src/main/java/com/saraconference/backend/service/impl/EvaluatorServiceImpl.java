@@ -250,10 +250,10 @@ public class EvaluatorServiceImpl implements EvaluatorService {
         switch (request.getStatus()) {
             case ACCEPTED:
                 logger.info("Paper {} has been accepted.", paper.getPaperTitle());
-                emailService.sendAcceptanceEmail(paper.getEmail(), paper.getPaperTitle());
+                emailService.sendAcceptanceEmail(paper.getEmail(), paper.getPaperTitle(), paper.getEvaluatorComments());
                 break;
             case REJECTED:
-                emailService.sendRejectionEmail(paper.getEmail(), paper.getPaperTitle());
+                emailService.sendRejectionEmail(paper.getEmail(), paper.getPaperTitle(), paper.getEvaluatorComments());
                 logger.info("Paper {} has been rejected.", paper.getPaperTitle());
                 break;
             default:

@@ -19,6 +19,7 @@ public class PaperSubmissionResponse {
     private String evaluatorName;
     private PaperStatus Status;
     private String evaluatorComments;
+    private String toggleStatus;
 
     // Constructors
     public PaperSubmissionResponse() {}
@@ -85,4 +86,11 @@ public class PaperSubmissionResponse {
     public String getPaperId() {
         return paperId;
     }
+    public String getToggleStatus() {
+        return toggleStatus;
+    }
+    public void setToggleStatus(String toggleStatus) {
+        this.toggleStatus = toggleStatus;
+    }
+
 }

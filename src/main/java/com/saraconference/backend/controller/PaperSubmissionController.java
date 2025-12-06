@@ -1,6 +1,7 @@
 package com.saraconference.backend.controller;
 
 import com.saraconference.backend.dto.PaperSubmissionResponse;
+import com.saraconference.backend.dto.SaveReviewCommentsRequest;
 import com.saraconference.backend.dto.UpdatePaperStatusRequest;
 import com.saraconference.backend.enums.PaperStatus;
 import com.saraconference.backend.service.PaperSubmissionService;
@@ -186,6 +187,20 @@ public class PaperSubmissionController {
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Error updating paper status: " + e.getMessage());
         }
+    }
+    @PatchMapping("save-review-comments")
+    public ResponseEntity<?> saveReviewComments(@RequestBody SaveReviewCommentsRequest request) {
+        try {
+            String paperId = request.getPaperId();
+            String comments = request.getEvaluatorComments();
+            String toggleStatus = request.getToggleStatus();
+
+            PaperSubmissionResponse updatedPaper = paperSubmissionService.saveReviewComments(paperId, comments, toggleStatus);
+            return ResponseEntity.ok(updatedPaper);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error saving review comments: " + e.getMessage());
+        }
+
     }
 
 }

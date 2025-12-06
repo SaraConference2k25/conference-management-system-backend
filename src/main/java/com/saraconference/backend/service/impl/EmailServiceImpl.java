@@ -29,17 +29,25 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendAcceptanceEmail(String email, String paperTitle) {
+    public void sendAcceptanceEmail(String email, String paperTitle,String evaluatorComments) {
         String subject = "Paper Submission Accepted";
         String body = "Congratulations! Your paper titled '" + paperTitle + "' has been accepted.";
+        if(evaluatorComments != null && !evaluatorComments.isBlank()){
+            body += "\n\nEvaluator Comments:\n" + evaluatorComments;
+        }
+        body += "\n\nWe look forward to your participation in the conference.\n\nWith regards, \nSara Conference Committee";
         sendEmailAsync(email, subject, body);
     }
 
     @Override
     @Async
-    public void sendRejectionEmail(String email, String paperTitle) {
+    public void sendRejectionEmail(String email, String paperTitle,String evaluatorComments) {
         String subject = "Paper Submission Rejected";
         String body = "We regret to inform you that your paper titled '" + paperTitle + "' has been rejected.";
+        if(evaluatorComments != null && !evaluatorComments.isBlank()){
+            body += "\n\nEvaluator Comments:\n" + evaluatorComments;
+        }
+        body += "\n\nThank you for your interest in our conference.\n\nWith regards, \nSara Conference Committee";
         sendEmailAsync(email, subject, body);
     }
 }

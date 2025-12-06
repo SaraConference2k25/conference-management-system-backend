@@ -247,6 +247,22 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             return List.of();
         }
     }
+    @Override
+    public PaperSubmissionResponse saveReviewComments(String paperId, String comments,String toggleStatus) {
+        logger.info("Saving review comments for paper ID: {} and the comments is {} ", paperId,comments);
+        try {
+            PaperSubmission paper = paperSubmissionRepository.findByPaperId(paperId)
+                    .orElseThrow(() -> new RuntimeException("Paper not found with ID: " + paperId));
+            paper.setEvaluatorComments(comments);
+            paper.setToggleStatus(toggleStatus);
+            PaperSubmission updatedPaper = paperSubmissionRepository.save(paper);
+            logger.info("Review comments saved successfully for paper ID: {}", paperId);
+            return convertToResponse(updatedPaper);
+        } catch (Exception e) {
+            logger.error("Error saving review comments for paper ID {}: {}", paperId, e.getMessage());
+            throw new RuntimeException("Error saving review comments", e);
+        }
+    }
 
     @Override
     public List<PaperSubmission> findByEvaluator(User evaluator) {
@@ -272,6 +288,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
         response.setEvaluatorName(paper.getEvaluatorName());
         response.setEvaluatorComments(paper.getEvaluatorComments());
         response.setStatus(paper.getStatus());
+        response.setToggleStatus(paper.getToggleStatus());
         logger.warn("The paper status in convertToResponse is: {}", paper.getStatus());
         return response;
     }

@@ -63,6 +63,9 @@ public class PaperSubmission {
     private User evaluator;
 
     @Column
+    String toggleStatus;
+
+    @Column
     private String evaluatorName;
 
     @Column
@@ -118,4 +121,7 @@ public class PaperSubmission {
 
     public String getEvaluatorComments() { return evaluatorComments; }
     public void setEvaluatorComments(String evaluatorComments) { this.evaluatorComments = evaluatorComments; }
+    public String getToggleStatus() { return toggleStatus; }
+    public void setToggleStatus(String toggleStatus) { this.toggleStatus = toggleStatus; }
+
 }
