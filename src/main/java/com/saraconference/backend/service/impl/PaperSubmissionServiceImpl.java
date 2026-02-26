@@ -104,6 +104,7 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
         logger.info("Updated evaluator workload to: w{}", evaluator.getWorkload());
         paper.setEvaluator(evaluator);
         paper.setEvaluatorName(evaluator.getUsername());
+        paper.setStatus(PaperStatus.UNDER_REVIEW);
         logger.info("Assigned paper to evaluator with ID: {}", paper.getId());
         logger.info("Assigning paper to evaluator with ID: {} and with name {}", paperId, evaluator.getUsername());
         paperSubmissionRepository.save(paper);
