@@ -7,6 +7,7 @@ import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.entity.PaperSubmission;
 import com.saraconference.backend.entity.Role;
 import com.saraconference.backend.entity.User;
+import com.saraconference.backend.enums.PaperStatus;
 import com.saraconference.backend.repository.RoleRepository;
 import com.saraconference.backend.repository.UserRepository;
 import com.saraconference.backend.repository.PaperSubmissionRepository;
@@ -193,7 +194,6 @@ public class EvaluatorServiceImpl implements EvaluatorService {
         if (!evaluator.getRoles().contains(evaluatorRole)) {
             throw new RuntimeException("User is not an evaluator");
         }
-
         paper.setEvaluator(evaluator);
         paperRepository.save(paper);
     }
