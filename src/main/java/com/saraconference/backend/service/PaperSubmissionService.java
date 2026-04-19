@@ -1,5 +1,6 @@
 package com.saraconference.backend.service;
 
+import com.saraconference.backend.dto.AdminMetricsResponse;
 import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.entity.PaperSubmission;
 import com.saraconference.backend.entity.User;
@@ -58,7 +59,8 @@ public interface PaperSubmissionService {
     void assignEvaluatorToPaper(String paperId, Long evaluatorId);
 
     PaperSubmissionResponse updatePaperStatus(String paperId, PaperStatus status);
-    
+
+    AdminMetricsResponse getAdminMetrics();
 
     List<PaperSubmissionResponse> getPapersByEvaluator(User evaluator);
 

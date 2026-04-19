@@ -1,5 +1,6 @@
 package com.saraconference.backend.controller;
 
+import com.saraconference.backend.dto.AdminMetricsResponse;
 import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.dto.SaveReviewCommentsRequest;
 import com.saraconference.backend.dto.UpdatePaperStatusRequest;
@@ -7,6 +8,7 @@ import com.saraconference.backend.enums.PaperStatus;
 import com.saraconference.backend.service.PaperSubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
@@ -156,6 +158,16 @@ public class PaperSubmissionController {
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error deleting paper: " + e.getMessage());
         }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/metrics-admin")
+    public ResponseEntity<AdminMetricsResponse> getAdminMetrics() {
+            logger.info("Admin requested metrics");
+            AdminMetricsResponse response = paperSubmissionService.getAdminMetrics();
+            logger.info("Admin metrics response FROM CONTROLLER: {}", response);
+            return ResponseEntity.ok(response);
+
+
     }
 
     /**

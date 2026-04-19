@@ -1,5 +1,6 @@
 package com.saraconference.backend.service.impl;
 
+import com.saraconference.backend.dto.AdminMetricsResponse;
 import com.saraconference.backend.dto.PaperSubmissionResponse;
 import com.saraconference.backend.entity.PaperSubmission;
 import com.saraconference.backend.entity.Role;
@@ -311,6 +312,19 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
             paperId = PaperIdGenerator.generatePaperId();
         } while (paperSubmissionRepository.existsByPaperId(paperId));
         return paperId;
+    }
+
+    public AdminMetricsResponse getAdminMetrics(){
+        logger.info("Generating admin metrics");
+        AdminMetricsResponse response = new AdminMetricsResponse();
+        response.setTotalPapers(paperSubmissionRepository.count());
+        response.setTotalAssigned(paperSubmissionRepository.countByStatus(PaperStatus.UNDER_REVIEW));
+        response.setTotalAccepted(paperSubmissionRepository.countByStatus(PaperStatus.ACCEPTED));
+        response.setTotalRejected(paperSubmissionRepository.countByStatus(PaperStatus.REJECTED));
+        response.setTotalEvaluators( userRepository.countByRoles_RoleName("EVALUATOR"));
+        response.setTotalPending(paperSubmissionRepository.countByStatus(PaperStatus.PENDING_ASSIGNMENT));
+        logger.info("Admin metrics generated: {}", response);
+        return response;
     }
 
 }
