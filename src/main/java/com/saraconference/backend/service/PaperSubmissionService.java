@@ -64,6 +64,8 @@ public interface PaperSubmissionService {
 
     List<PaperSubmissionResponse> getPapersByEvaluatorUsername(String evaluatorUsername);
 
+    List<PaperSubmissionResponse> getPapersByEvaluatorEmail(String evaluatorEmail);
+
     PaperSubmissionResponse saveReviewComments(String paperId, String comments,String toggleStatus);
 }
 

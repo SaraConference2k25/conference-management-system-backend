@@ -80,10 +80,10 @@ public class PaperSubmissionController {
         }
     }
 
-    @GetMapping("/evaluator/{evaluatorUsername}")
+    @GetMapping("/evaluator/email/{userEmail}")
     public ResponseEntity<List<PaperSubmissionResponse>> getPapersByEvaluator(
-            @PathVariable String evaluatorUsername) {
-        List<PaperSubmissionResponse> papers = paperSubmissionService.getPapersByEvaluatorUsername(evaluatorUsername);
+            @PathVariable String userEmail) {
+        List<PaperSubmissionResponse> papers = paperSubmissionService.getPapersByEvaluatorEmail(userEmail);
         return ResponseEntity.ok(papers);
     }
 

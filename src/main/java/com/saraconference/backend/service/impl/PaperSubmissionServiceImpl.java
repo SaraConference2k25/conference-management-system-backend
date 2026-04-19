@@ -204,6 +204,18 @@ public class PaperSubmissionServiceImpl implements PaperSubmissionService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<PaperSubmissionResponse> getPapersByEvaluatorEmail(String evaluatorEmail) {
+        User evaluator = userRepository.findByEmail(evaluatorEmail);
+        if (evaluator == null) {
+            throw new RuntimeException("Evaluator not found");
+        }
+
+        return paperSubmissionRepository.findByEvaluator(evaluator).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
 
 
 
