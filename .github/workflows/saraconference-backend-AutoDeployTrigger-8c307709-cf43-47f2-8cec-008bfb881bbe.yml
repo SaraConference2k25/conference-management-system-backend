@@ -1,49 +1,61 @@
-name: Trigger auto deployment for saraconference-backend
+name: Deploy Conference Management System Backend to GCP VM
 
-# When this action will be executed
 on:
-  # Automatically trigger it when detected changes in repo
   push:
-    branches: 
-      [ master ]
-    paths:
-    - '**'
-    - '.github/workflows/saraconference-backend-AutoDeployTrigger-8c307709-cf43-47f2-8cec-008bfb881bbe.yml'
-
-  # Allow manual trigger 
-  workflow_dispatch:      
+    branches: [ "master" ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    permissions: 
-      id-token: write #This is required for requesting the OIDC JWT Token
-      contents: read #Required when GH token is used to authenticate with private repo
 
     steps:
-      - name: Checkout to the branch
-        uses: actions/checkout@v2
+      # 1️⃣ Pull code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Azure Login
-        uses: azure/login@v2
+      # 2️⃣ Login to Docker Hub
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+
+      # 3️⃣ Build Docker Image
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/saraconference-backend:latest .
+
+      # 4️⃣ Push Image
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/saraconference:latest
+
+      # 5️⃣ Deploy to GCP VM via SSH
+      - name: Deploy to GCP VM
+        uses: appleboy/ssh-action@v1
         with:
-          client-id: ${{ secrets.SARACONFERENCEBACKEND_AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.SARACONFERENCEBACKEND_AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.SARACONFERENCEBACKEND_AZURE_SUBSCRIPTION_ID }}
+          host: ${{ secrets.VM_IP }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            
+            echo "🔐 Logging into Docker Hub on VM"
+            docker login -u "${{ secrets.DOCKER_USER }}" -p "${{ secrets.DOCKER_PASS }}"
+            
+            echo "📥 Pulling latest image"
+            docker pull ${{ secrets.DOCKER_USER }}/saraconference-backend:latest
+            
+            echo "stopping old container "
+            docker stop saraconference-backend
+            docker rm saraconference-backend
+            echo "🚀 Starting new container"
+            docker run -d \
+            --name saraconference \
+            -e TZ=Asia/Kolkata \
+            -e JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Kolkata" \
+            -e SPRING_PROFILES_ACTIVE="prod"
+            --env-file /home/founder_sarasell/saraconference/.env \
+            -p 8090:8090 \
+            --restart unless-stopped \
+            ${{ secrets.DOCKER_USER }}/saraconference-backend:latest
 
-      - name: Build and push container image to registry
-        uses: azure/container-apps-deploy-action@v2
-        with:
-          appSourcePath: ${{ github.workspace }}
-          _dockerfilePathKey_: _dockerfilePath_
-          _targetLabelKey_: _targetLabel_
-          registryUrl: docker.io
-          registryUsername: ${{ secrets.SARACONFERENCEBACKEND_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.SARACONFERENCEBACKEND_REGISTRY_PASSWORD }}
-          containerAppName: saraconference-backend
-          resourceGroup: SaraConference2025
-          imageToBuild: stellarstacker/saraconference-backend:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
-
-
+            
+            echo "✅ Deployment finished"
