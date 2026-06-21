@@ -31,7 +31,7 @@ public class WebSecurityConfig {
 
         // Allowed origins
         corsConfig.setAllowedOrigins(List.of(
-                "https://saraconference2k25.netlify.app",
+                "https://saraconference2026.netlify.app",
                 "http://localhost:5173",
                 "http://localhost:3000",
                 "http://localhost:*"
