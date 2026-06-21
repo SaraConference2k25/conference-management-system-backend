@@ -26,7 +26,7 @@ jobs:
       # 4️⃣ Push Image
       - name: Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKER_USER }}/saraconference:latest
+          docker push ${{ secrets.DOCKER_USER }}/saraconference-backend:latest
 
       # 5️⃣ Deploy to GCP VM via SSH
       - name: Deploy to GCP VM
