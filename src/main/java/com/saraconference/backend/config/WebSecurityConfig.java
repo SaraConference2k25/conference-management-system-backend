@@ -33,8 +33,7 @@ public class WebSecurityConfig {
         corsConfig.setAllowedOrigins(List.of(
                 "https://saraconference2026.netlify.app",
                 "http://localhost:5173",
-                "http://localhost:3000",
-                "http://localhost:*"
+                "http://localhost:3000"
         ));
 
         // Required methods for PATCH to work
