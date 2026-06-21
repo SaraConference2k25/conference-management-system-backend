@@ -24,6 +24,6 @@ ENV SPRING_PROFILES_ACTIVE=local
 
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 8069
+EXPOSE 8090
 
-ENTRYPOINT ["java", "-Dserver.port=8069", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dserver.port=8090", "-jar", "app.jar"]
