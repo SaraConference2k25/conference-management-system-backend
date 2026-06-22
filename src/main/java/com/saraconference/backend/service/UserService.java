@@ -8,4 +8,12 @@ public interface UserService {
     List<User> getAllUsers();
     User getUserById(Long id);
     void deleteUser(Long id);
+
+    long getTotalPapers(long userId);
+
+    long getTotalSubmittedPapers(Long userId);
+
+    long getTotalUnderReviewPapers(Long userId);
+
+    long getTotalAcceptedPapers(Long userId);
 }
