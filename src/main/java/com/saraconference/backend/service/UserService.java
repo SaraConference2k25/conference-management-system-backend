@@ -9,7 +9,7 @@ public interface UserService {
     User getUserById(Long id);
     void deleteUser(Long id);
 
-    long getTotalPapers(long userId);
+    long getTotalPapers(String email);
 
     long getTotalSubmittedPapers(Long userId);
 

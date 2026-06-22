@@ -33,9 +33,9 @@ public class UserController {
     }
 
     @GetMapping("/total-papers")
-    public ResponseEntity<?> getTotalPapers(@RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getTotalPapers(@RequestParam("email") String email) {
         try {
-            long totalPapers = userService.getTotalPapers(userId);
+            long totalPapers = userService.getTotalPapers(email);
             return ResponseEntity.ok(totalPapers);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error retrieving total submitted papers: " + e.getMessage());

@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long getTotalPapers(long userId) {
-        return paperSubmissionRepository.countByUser(userId);
+    public long getTotalPapers(String email) {
+        return paperSubmissionRepository.countByEmail(email);
     }
 
     @Override

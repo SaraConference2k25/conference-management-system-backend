@@ -15,6 +15,6 @@ public interface PaperSubmissionRepository extends JpaRepository<PaperSubmission
     List<PaperSubmission> findByEvaluator(User evaluator);
     boolean existsByPaperId(String paperId);
     Optional<PaperSubmission> findByPaperId(String paperId);
-    long countByUser(long userId);
+    long countByEmail(String email);
     long countByStatus(PaperStatus paperStatus);
 }
