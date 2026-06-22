@@ -43,10 +43,10 @@ public class UserController {
     }
 
     @GetMapping("/net-submitted-papers")
-    public ResponseEntity<?> getNetSubmittedPapers(@RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getNetSubmittedPapers(@RequestParam("email") String email) {
         try {
                  // Assuming userId is the authenticated user's ID
-            long netSubmittedPapers = userService.getTotalSubmittedPapers(userId);
+            long netSubmittedPapers = userService.getTotalSubmittedPapers(email);
             return ResponseEntity.ok(netSubmittedPapers);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error retrieving net submitted papers: " + e.getMessage());
@@ -54,9 +54,9 @@ public class UserController {
     }
 
     @GetMapping("/net-underreview-papers")
-    public ResponseEntity<?> getNetUnderReviewPapers(@RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getNetUnderReviewPapers(@RequestParam("email") String email) {
         try {
-            long netSubmittedPapers = userService.getTotalUnderReviewPapers(userId);
+            long netSubmittedPapers = userService.getTotalUnderReviewPapers(email);
             return ResponseEntity.ok(netSubmittedPapers);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error retrieving net submitted papers: " + e.getMessage());
@@ -64,9 +64,9 @@ public class UserController {
     }
 
     @GetMapping("/net-accepted-papers")
-    public ResponseEntity<?> getNetAcceptedPapersByUser(@RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getNetAcceptedPapersByUser(@RequestParam("email") String email) {
         try {
-            long netSubmittedPapers = userService.getTotalAcceptedPapers(userId);
+            long netSubmittedPapers = userService.getTotalAcceptedPapers(email);
             return ResponseEntity.ok(netSubmittedPapers);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error retrieving net submitted papers: " + e.getMessage());

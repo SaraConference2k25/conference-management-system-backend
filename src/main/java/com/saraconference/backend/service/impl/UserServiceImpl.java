@@ -42,22 +42,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long getTotalSubmittedPapers(Long userId) {
-        long totalPendingAssignmentPapers = paperSubmissionRepository.countByStatus(PaperStatus.PENDING_ASSIGNMENT);
-        long totalUnderReviewPapers = paperSubmissionRepository.countByStatus(PaperStatus.UNDER_REVIEW);
+    public long getTotalSubmittedPapers(String email) {
+        long totalPendingAssignmentPapers = paperSubmissionRepository.countByEmailAndStatus(email,PaperStatus.PENDING_ASSIGNMENT);
+        long totalUnderReviewPapers = paperSubmissionRepository.countByEmailAndStatus(email, PaperStatus.UNDER_REVIEW);
         long totalSubmittedPapers = totalPendingAssignmentPapers + totalUnderReviewPapers;
         return totalSubmittedPapers;
     }
 
     @Override
-    public long getTotalUnderReviewPapers(Long userId) {
-        long totalUnderReviewPapers = paperSubmissionRepository.countByStatus(PaperStatus.UNDER_REVIEW);
+    public long getTotalUnderReviewPapers(String email) {
+        long totalUnderReviewPapers = paperSubmissionRepository.countByEmailAndStatus(email, PaperStatus.UNDER_REVIEW);
         return totalUnderReviewPapers;
     }
 
     @Override
-    public long getTotalAcceptedPapers(Long userId) {
-        long totalAcceptedPapers = paperSubmissionRepository.countByStatus(PaperStatus.ACCEPTED);
+    public long getTotalAcceptedPapers(String email) {
+        long totalAcceptedPapers = paperSubmissionRepository.countByEmailAndStatus(email, PaperStatus.ACCEPTED);
         return totalAcceptedPapers;
     }
 }

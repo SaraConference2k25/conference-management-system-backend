@@ -11,9 +11,9 @@ public interface UserService {
 
     long getTotalPapers(String email);
 
-    long getTotalSubmittedPapers(Long userId);
+    long getTotalSubmittedPapers(String email);
 
-    long getTotalUnderReviewPapers(Long userId);
+    long getTotalUnderReviewPapers(String email);
 
-    long getTotalAcceptedPapers(Long userId);
+    long getTotalAcceptedPapers(String email);
 }

@@ -17,4 +17,6 @@ public interface PaperSubmissionRepository extends JpaRepository<PaperSubmission
     Optional<PaperSubmission> findByPaperId(String paperId);
     long countByEmail(String email);
     long countByStatus(PaperStatus paperStatus);
+
+    long countByEmailAndStatus(String email, PaperStatus paperStatus);
 }
