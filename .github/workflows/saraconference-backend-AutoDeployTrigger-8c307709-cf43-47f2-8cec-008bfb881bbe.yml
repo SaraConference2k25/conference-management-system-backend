@@ -1,4 +1,4 @@
-name: Deploy Conference Management System Backend to GCP VM as of 29.09.2026
+name: Deploy Conference Management System Backend to GCP VM as of 29.09.2026 retry
 
 on:
   push:
